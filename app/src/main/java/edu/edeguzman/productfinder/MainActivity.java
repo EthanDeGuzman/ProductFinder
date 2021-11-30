@@ -38,10 +38,9 @@ public class MainActivity extends AppCompatActivity {
     public void callQuery(View view) {
         Toast.makeText(getApplicationContext(), "Search Query started", Toast.LENGTH_SHORT).show();
         String query = search.getText().toString().toLowerCase();
-        String url ="https://ebay-product-search-scraper.p.rapidapi.com/index.php?query=" + query;
 
         Intent showResults = new Intent(this, Results.class);
-        showResults.putExtra("url", url);
+        showResults.putExtra("query", query);
         startActivity(showResults);
     }
 }
