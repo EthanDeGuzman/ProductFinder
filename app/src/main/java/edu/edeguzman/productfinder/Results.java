@@ -1,5 +1,6 @@
 package edu.edeguzman.productfinder;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -56,16 +57,16 @@ public class Results extends AppCompatActivity {
 
         ebayUrl ="https://ebay-product-search-scraper.p.rapidapi.com/index.php?query=" + query;
         amazonUrl = "https://amazon-data-scraper35.p.rapidapi.com/search/" + query + "?api_key=9df2c0810a9fe33226a6d618dea35d96";
-        aliExpressUrl = "https://ali-express1.p.rapidapi.com/search?query=" + query;
+        aliExpressUrl = "https://magic-aliexpress1.p.rapidapi.com/api/products/search?name=" + query + "&sort=SALE_PRICE_ASC&page=1&targetCurrency=EUR&lg=en";
 
         searchEbay(ebayUrl);
         searchAmazon(amazonUrl);
-        //searchAliExpress(aliExpressUrl);
+        searchAliExpress(aliExpressUrl);
     }
 
     protected void searchEbay(String url){
-        //Replace all Spaces in the Url with %20 for query
-        url.replaceAll(" ", "%20");
+        //Replace all Spaces in the Url with 20% for query
+        url = url.replaceAll(" ", "20%");
 
         queue = Volley.newRequestQueue(this);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -117,8 +118,8 @@ public class Results extends AppCompatActivity {
     }
 
     protected void searchAmazon(String url){
-        //Replace all Spaces in the Url with %20 for query
-        url.replaceAll(" ", "%20");
+        //Removes all spaces in the url
+        url = url.replaceAll(" ", "");
 
         queue = Volley.newRequestQueue(this);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -132,7 +133,7 @@ public class Results extends AppCompatActivity {
                                 JSONObject products = array.getJSONObject(i);
 
                                 String name = products.getString("name");
-                                String price = String.valueOf(products.getInt("price"));
+                                String price = products.getString("price_string");
                                 String link = products.getString("url");
 
                                 //Set Text Variables here
@@ -172,7 +173,7 @@ public class Results extends AppCompatActivity {
 
     protected void searchAliExpress(String url){
         //Replace all Spaces in the Url with %20 for query
-        url.replaceAll(" ", "%20");
+        url = url.replaceAll(" ", "%20");
 
         queue = Volley.newRequestQueue(this);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -180,43 +181,20 @@ public class Results extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            JSONArray data = response.getJSONArray("data");
+                            JSONArray docs = response.getJSONArray("docs");
 
                             for(int i = 0; i < 1; i++){
-                                JSONObject array = data.getJSONObject(i);
+                                JSONObject data = docs.getJSONObject(i);
 
-                                JSONArray searchResult = array.getJSONArray("searchResult");
-
-                                JSONObject searchArray = searchResult.getJSONObject(i);
-
-                                JSONArray mods = searchArray.getJSONArray("mods");
-
-                                JSONObject modsArray = mods.getJSONObject(i);
-
-                                JSONArray itemList = modsArray.getJSONArray("itemList");
-
-                                JSONObject itemsArray = itemList.getJSONObject(i);
-
-                                JSONArray content = itemsArray.getJSONArray("content");
-
-                                JSONObject contentArray = content.getJSONObject(i);
-
-                                JSONArray title = contentArray.getJSONArray("title");
-                                JSONArray price = contentArray.getJSONArray("prices");
-
-                                JSONObject titleArray = title.getJSONObject(i);
-
-                                JSONObject priceArray = price.getJSONObject(i);
-
-                                JSONArray salePrice = priceArray.getJSONArray("salePrice");
-
-                                JSONObject salePriceArray = salePrice.getJSONObject(i);
-
-                                String name = titleArray.getString("displayTitle");
-                                String priceText = salePriceArray.getString("prices");
+                                String name = data.getString("product_title");
+                                String price = data.getString("app_sale_price");
+                                String link = data.getString("product_detail_url");
 
                                 Products.add(name);
-                                Products.add(priceText);
+                                Products.add("€" + price);
+                                Products.add(link);
+
+                                displayData.setAdapter(productsAdapter);
                             }
                         }
                         catch (JSONException e){
@@ -233,7 +211,7 @@ public class Results extends AppCompatActivity {
             @Override
             public Map getHeaders() throws AuthFailureError {
                 HashMap headers = new HashMap();
-                headers.put("x-rapidapi-host", "ali-express1.p.rapidapi.com");
+                headers.put("x-rapidapi-host", "magic-aliexpress1.p.rapidapi.com");
                 headers.put("x-rapidapi-key", "721f9e5ae4msh6c1a025129c3019p187cfbjsnc2b39eb1b331");
                 return headers;
             }
