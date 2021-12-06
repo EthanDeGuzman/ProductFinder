@@ -3,9 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/ethan/AndroidStudioProjects/ProductFinder/app/src/main/res/layout/activity_barcode_scanner.xml" value="0.2957427536231884" />
-        <entry key="..\:/Users/ethan/AndroidStudioProjects/ProductFinder/app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
-        <entry key="..\:/Users/ethan/AndroidStudioProjects/ProductFinder/app/src/main/res/layout/activity_results.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/jcarb/Downloads/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/activity_barcode_scanner.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/jcarb/Downloads/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/activity_image_scanner.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/jcarb/Downloads/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/jcarb/Downloads/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/activity_results.xml" value="0.36666666666666664" />
+        <entry key="..\:/collegeWork/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/activity_barcode_scanner.xml" value="0.37135416666666665" />
+        <entry key="..\:/collegeWork/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/activity_image_scanner.xml" value="0.37135416666666665" />
+        <entry key="..\:/collegeWork/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/activity_main.xml" value="0.37135416666666665" />
+        <entry key="..\:/collegeWork/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/activity_results.xml" value="0.33" />
+        <entry key="..\:/collegeWork/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/table.xml" value="0.37135416666666665" />
+        <entry key="..\:/collegeWork/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/table_item.xml" value="0.37135416666666665" />
+        <entry key="..\:/collegeWork/ProductFinder-master/ProductFinder-master/app/src/main/res/layout/tablerow.xml" value="0.37135416666666665" />
       </map>
     </option>
   </component>

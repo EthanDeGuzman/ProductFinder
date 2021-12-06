@@ -19,6 +19,9 @@
         <activity
             android:name=".BarcodeScanner"
             android:exported="true" />
+        <activity
+            android:name=".ImageScanner"
+            android:exported="true"/>
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"

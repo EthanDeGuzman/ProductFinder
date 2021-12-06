@@ -1,12 +1,19 @@
 package edu.edeguzman.productfinder;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.flatbuffers.Table;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -30,13 +38,15 @@ import java.util.List;
 import java.util.Map;
 
 public class Results extends AppCompatActivity {
-    private Button Home,RecentSearches,Signin,Search;
-    private TextView ProductField, PriceField, LinkField;
+    private Button Home,RecentSearches,Signin,Search, Back;
     private String ebayUrl, amazonUrl, aliExpressUrl, query;
     private RequestQueue queue;
-    private ListView displayData;
-    private List<String> Products;
-    private ArrayAdapter<String> productsAdapter;
+    private TextView NameView, PriceView, LinkView;
+    private TableLayout ItemTable;
+    private String s1[], s2[], s3[];
+    private RecyclerView rview;
+    private int counter=1;
+    private myAdapter recyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +57,17 @@ public class Results extends AppCompatActivity {
         RecentSearches = findViewById(R.id.Button_Searches);
         Signin = findViewById(R.id.Button_SignIn);
         Search = findViewById(R.id.Button_NewSearch);
+        Back = findViewById(R.id.btnBack);
+        rview = findViewById(R.id.recyclerView);
 
-        displayData = findViewById(R.id.DisplayData);
-        Products = new ArrayList<String>();
-        productsAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, Products);
-        displayData.setAdapter(productsAdapter);
+
+        s1 = getResources().getStringArray(R.array.ProductName);
+        s2 = getResources().getStringArray(R.array.ProductPrice);
+        s3 = getResources().getStringArray(R.array.ProductLink);
+
+        recyclerAdapter = new myAdapter(this, s1, s2, s3);
+        rview.setAdapter(recyclerAdapter);
+        rview.setLayoutManager(new LinearLayoutManager(this));
 
         query = getIntent().getStringExtra("query");
 
@@ -60,12 +76,39 @@ public class Results extends AppCompatActivity {
         aliExpressUrl = "https://magic-aliexpress1.p.rapidapi.com/api/products/search?name=" + query + "&sort=SALE_PRICE_ASC&page=1&targetCurrency=EUR&lg=en";
 
         searchEbay(ebayUrl);
-        searchAmazon(amazonUrl);
-        searchAliExpress(aliExpressUrl);
+       searchAmazon(amazonUrl);
+       searchAliExpress(aliExpressUrl);
+
+
+        Home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goHome();
+            }
+        });
+
+        Back.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View view) {
+                goBack();
+            }
+        });
+    }
+
+    public void goBack()
+    {
+        Intent goback = new Intent(this, MainActivity.class);
+        startActivity(goback);
+    }
+
+    public void goHome()
+    {
+        Intent gohome = new Intent(this, MainActivity.class);
+        startActivity(gohome);
     }
 
     protected void searchEbay(String url){
-        //Replace all Spaces in the Url with 20% for query
+        //Replace all Spaces in the Url with %20 for query
         url = url.replaceAll(" ", "20%");
 
         queue = Volley.newRequestQueue(this);
@@ -76,18 +119,24 @@ public class Results extends AppCompatActivity {
                         try {
                             JSONArray array = response.getJSONArray("products");
 
-                            for(int i = 0; i < 1; i++){
+                            for(int i = 0; i < 5; i++){
                                 JSONObject products = array.getJSONObject(i);
 
                                 String name = products.getString("name");
                                 String price = products.getString("price");
                                 String link = products.getString("link");
 
-                                Products.add(name);
-                                Products.add(price);
-                                Products.add(link);
 
-                                displayData.setAdapter(productsAdapter);
+
+
+                                    s1[counter] = name;
+                                    s2[counter] = price;
+                                    s3[counter] = link;
+
+                                        counter++;
+
+                                rview.setAdapter(recyclerAdapter);
+
                             }
                         }
                         catch (JSONException e){
@@ -118,7 +167,7 @@ public class Results extends AppCompatActivity {
     }
 
     protected void searchAmazon(String url){
-        //Removes all spaces in the url
+        //Replace all Spaces in the Url with %20 for query
         url = url.replaceAll(" ", "");
 
         queue = Volley.newRequestQueue(this);
@@ -129,19 +178,21 @@ public class Results extends AppCompatActivity {
                         try {
                             JSONArray array = response.getJSONArray("results");
 
-                            for(int i = 0; i < 1; i++){
+                            for(int i = 0; i < 5; i++){
                                 JSONObject products = array.getJSONObject(i);
 
                                 String name = products.getString("name");
                                 String price = products.getString("price_string");
                                 String link = products.getString("url");
 
-                                //Set Text Variables here
-                                Products.add(name);
-                                Products.add(price);
-                                Products.add(link);
+                                s1[counter] = name;
+                                s2[counter] = price;
+                                s3[counter] = link;
 
-                                displayData.setAdapter(productsAdapter);
+                                counter++;
+
+                                rview.setAdapter(recyclerAdapter);
+
                             }
                         }
                         catch (JSONException e){
@@ -183,18 +234,20 @@ public class Results extends AppCompatActivity {
                         try {
                             JSONArray docs = response.getJSONArray("docs");
 
-                            for(int i = 0; i < 1; i++){
+                            for(int i = 0; i < 5; i++){
                                 JSONObject data = docs.getJSONObject(i);
 
                                 String name = data.getString("product_title");
                                 String price = data.getString("app_sale_price");
                                 String link = data.getString("product_detail_url");
 
-                                Products.add(name);
-                                Products.add("€" + price);
-                                Products.add(link);
+                                s1[counter] = name;
+                                s2[counter] = "€" + price;
+                                s3[counter] = link;
 
-                                displayData.setAdapter(productsAdapter);
+                                counter++;
+
+                                rview.setAdapter(recyclerAdapter);
                             }
                         }
                         catch (JSONException e){
