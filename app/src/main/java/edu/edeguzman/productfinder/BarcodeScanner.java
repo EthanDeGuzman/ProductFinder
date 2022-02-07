@@ -17,12 +17,26 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BarcodeScanner extends AppCompatActivity {
 
@@ -53,15 +67,10 @@ public class BarcodeScanner extends AppCompatActivity {
             }
         });
 
-
         initialiseDetectorsAndSources();
     }
 
-    public void goBack()
-    {
-        Intent goback = new Intent(this, MainActivity.class);
-        startActivity(goback);
-    }
+    public void goBack() { finish();}
 
     private void initialiseDetectorsAndSources() {
 
@@ -132,10 +141,12 @@ public class BarcodeScanner extends AppCompatActivity {
                                 barcodeText.setText(barcodeData);
                                 toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
                             }
+
                         }
                     });
                 }
             }
         });
     }
+
 }

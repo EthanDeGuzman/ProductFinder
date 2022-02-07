@@ -4,17 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -25,24 +17,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.flatbuffers.Table;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Results extends AppCompatActivity {
-    private Button Home,RecentSearches,Signin,Search, Back;
-    private String ebayUrl, amazonUrl, aliExpressUrl, query;
+    private Button Home,RecentSearches, Back;
+    private String ebayUrl, amazonUrl, aliExpressUrl, query, databaseQuery;
     private RequestQueue queue;
-    private TextView NameView, PriceView, LinkView;
-    private TableLayout ItemTable;
     private String s1[], s2[], s3[];
     private RecyclerView rview;
     private int counter=1;
@@ -55,11 +41,8 @@ public class Results extends AppCompatActivity {
 
         Home = findViewById(R.id.Button_Home);
         RecentSearches = findViewById(R.id.Button_Searches);
-        Signin = findViewById(R.id.Button_SignIn);
-        Search = findViewById(R.id.Button_NewSearch);
         Back = findViewById(R.id.btnBack);
         rview = findViewById(R.id.recyclerView);
-
 
         s1 = getResources().getStringArray(R.array.ProductName);
         s2 = getResources().getStringArray(R.array.ProductPrice);
@@ -69,16 +52,23 @@ public class Results extends AppCompatActivity {
         rview.setAdapter(recyclerAdapter);
         rview.setLayoutManager(new LinearLayoutManager(this));
 
-        query = getIntent().getStringExtra("query");
+        Bundle extras = getIntent().getExtras();
 
-        ebayUrl ="https://ebay-product-search-scraper.p.rapidapi.com/index.php?query=" + query;
-        amazonUrl = "https://amazon-data-scraper35.p.rapidapi.com/search/" + query + "?api_key=9df2c0810a9fe33226a6d618dea35d96";
-        aliExpressUrl = "https://magic-aliexpress1.p.rapidapi.com/api/products/search?name=" + query + "&sort=SALE_PRICE_ASC&page=1&targetCurrency=EUR&lg=en";
+        if(extras.containsKey("query")){
+            query = extras.getString("query");
 
-        searchEbay(ebayUrl);
-       searchAmazon(amazonUrl);
-       searchAliExpress(aliExpressUrl);
+            //Declare URls and call methods (Euro Based)
+            ebayUrl ="https://ebay-products-search-scraper.p.rapidapi.com/products?query=" + query + "&page=1&Item_Location=europe";
+            amazonUrl = "https://amazon-deutschland-data-scraper.p.rapidapi.com/search/" + query + "?api_key=7c3c12edf5e0523209099e036c847ef1";
+            aliExpressUrl = "https://magic-aliexpress1.p.rapidapi.com/api/products/search?name=" + query + "&sort=SALE_PRICE_ASC&page=1&targetCurrency=EUR&lg=en";
 
+            searchEbay(ebayUrl);
+            //searchAmazon(amazonUrl);
+            //searchAliExpress(aliExpressUrl);
+        }
+        else if (extras.containsKey("barcodeText")){
+            databaseQuery = extras.getString("barcodeText");
+        }
 
         Home.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,17 +85,9 @@ public class Results extends AppCompatActivity {
         });
     }
 
-    public void goBack()
-    {
-        Intent goback = new Intent(this, MainActivity.class);
-        startActivity(goback);
-    }
+    public void goBack() { finish(); }
 
-    public void goHome()
-    {
-        Intent gohome = new Intent(this, MainActivity.class);
-        startActivity(gohome);
-    }
+    public void goHome() { finish(); }
 
     protected void searchEbay(String url){
         //Replace all Spaces in the Url with %20 for query
@@ -122,18 +104,15 @@ public class Results extends AppCompatActivity {
                             for(int i = 0; i < 5; i++){
                                 JSONObject products = array.getJSONObject(i);
 
-                                String name = products.getString("name");
+                                String name = products.getString("title");
                                 String price = products.getString("price");
-                                String link = products.getString("link");
+                                String link = products.getString("productLink");
 
+                                s1[counter] = name;
+                                s2[counter] = price;
+                                s3[counter] = link;
 
-
-
-                                    s1[counter] = name;
-                                    s2[counter] = price;
-                                    s3[counter] = link;
-
-                                        counter++;
+                                counter++;
 
                                 rview.setAdapter(recyclerAdapter);
 
@@ -153,7 +132,7 @@ public class Results extends AppCompatActivity {
             @Override
             public Map getHeaders() throws AuthFailureError {
                 HashMap headers = new HashMap();
-                headers.put("x-rapidapi-host", "ebay-product-search-scraper.p.rapidapi.com");
+                headers.put("x-rapidapi-host", "ebay-products-search-scraper.p.rapidapi.com");
                 headers.put("x-rapidapi-key", "721f9e5ae4msh6c1a025129c3019p187cfbjsnc2b39eb1b331");
                 return headers;
             }
@@ -209,7 +188,7 @@ public class Results extends AppCompatActivity {
             @Override
             public Map getHeaders() throws AuthFailureError {
                 HashMap headers = new HashMap();
-                headers.put("x-rapidapi-host", "amazon-data-scraper35.p.rapidapi.com");
+                headers.put("x-rapidapi-host", "amazon-deutschland-data-scraper.p.rapidapi.com");
                 headers.put("x-rapidapi-key", "721f9e5ae4msh6c1a025129c3019p187cfbjsnc2b39eb1b331");
                 return headers;
             }
@@ -277,4 +256,5 @@ public class Results extends AppCompatActivity {
 
         queue.add(request);
     }
+
 }

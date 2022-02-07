@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProductFinder">
         <activity
+            android:name=".SearchHistory"
+            android:exported="false" />
+        <activity
             android:name=".Results"
             android:exported="false" />
         <activity
@@ -21,7 +24,7 @@
             android:exported="true" />
         <activity
             android:name=".ImageScanner"
-            android:exported="true"/>
+            android:exported="true" />
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
