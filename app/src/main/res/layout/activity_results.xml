@@ -4,72 +4,88 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey"
     tools:context=".Results">
+
+    <ImageView
+        android:id="@+id/BannerColour"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@color/charcoal" />
 
     <Button
         android:id="@+id/Button_Home"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="5dp"
+        android:backgroundTint="@color/Black"
+        android:drawableTop="@android:drawable/ic_menu_compass"
         android:text="Home"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar2"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar2"
-        app:layout_constraintHorizontal_bias="0.044"
-        app:layout_constraintStart_toStartOf="@+id/toolbar2"
-        app:layout_constraintTop_toTopOf="@+id/toolbar2" />
+        android:onClick="callHome"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
     <Button
-        android:id="@+id/Button_Searches"
+        android:id="@+id/Button_History"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Recent Searches"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar2"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar2"
-        app:layout_constraintHorizontal_bias="0.478"
-        app:layout_constraintStart_toStartOf="@+id/toolbar2"
-        app:layout_constraintTop_toTopOf="@+id/toolbar2"
-        app:layout_constraintVertical_bias="0.478" />
+        android:layout_height="75dp"
+        android:layout_marginStart="10dp"
+        android:backgroundTint="@color/Black"
+        android:drawableTop="@android:drawable/ic_menu_recent_history"
+        android:onClick="CallRecentSearches"
+        android:text="History"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toEndOf="@+id/Button_Home"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
     <Button
-        android:id="@+id/Button_SignIn"
+        android:id="@+id/Button_Search"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Sign In"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar2"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar2"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintStart_toStartOf="@+id/toolbar2"
-        app:layout_constraintTop_toTopOf="@+id/toolbar2"
-        app:layout_constraintVertical_bias="0.0" />
+        android:layout_height="75dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/Black"
+        android:drawableTop="@android:drawable/ic_menu_search"
+        android:onClick="callSearch"
+        android:text="Searches"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/Button_ImageScanner"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+    <Button
+        android:id="@+id/Button_ImageScanner"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/Black"
+        android:drawableTop="@android:drawable/ic_menu_camera"
+        android:text="AI Scan"
+        android:onClick="callImageScanner"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/Button_History"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar2"
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="15dp"
-        android:background="#7E7A7A"
+        android:layout_height="80dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/Black"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PageTitle"/>
-
-    <Button
-        android:id="@+id/Button_NewSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Search Again"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.837"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/PageTitle"
@@ -77,49 +93,38 @@
         android:layout_height="30dp"
         android:layout_marginTop="15dp"
         android:text="Search Results"
+        android:textColor="@color/white"
         android:textAlignment="center"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/TopResultsTitle"
         android:layout_width="106dp"
         android:layout_height="31dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="76dp"
         android:text="Top results:"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
-
-
-    <Button
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.179"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/PageTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
+        android:background="@color/white"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
+        android:layout_height="450dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
+        android:scrollbars="vertical"
         app:layout_constrainedHeight="true"
-        app:layout_constraintHeight_max="400dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHeight_max="450dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TopResultsTitle" />
 

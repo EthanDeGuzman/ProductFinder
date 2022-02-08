@@ -20,7 +20,7 @@
             android:name=".Results"
             android:exported="false" />
         <activity
-            android:name=".BarcodeScanner"
+            android:name=".SearchResults"
             android:exported="true" />
         <activity
             android:name=".ImageScanner"

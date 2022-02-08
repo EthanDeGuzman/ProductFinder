@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import java.util.List;
 
@@ -65,10 +66,25 @@ public class SearchHistory extends AppCompatActivity {
 
     }
 
-    public void goBack(){
-        finish();
+    public void callHome(View view) {
+        Intent showHome= new Intent(this, MainActivity.class);
+        startActivity(showHome);
     }
 
+    public void callSearch(View view) {
+        Intent showSearch = new Intent(this, SearchResults.class);
+        startActivity(showSearch);
+    }
+
+    public void CallRecentSearches(View view) {
+        Intent showHistory = new Intent(this, SearchHistory.class);
+        startActivity(showHistory);
+    }
+
+    public void callImageScanner(View view) {
+        Intent showImageScanner = new Intent(this, ImageScanner.class);
+        startActivity(showImageScanner);
+    }
 
     @Override
     protected void onResume() {

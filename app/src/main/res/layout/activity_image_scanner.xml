@@ -1,21 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/grey"
+    tools:context=".ImageScanner">
+
+    <ImageView
+        android:id="@+id/BannerColour"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@color/charcoal" />
+
+    <TextView
+        android:id="@+id/PageTitle"
+        android:layout_width="167dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="15dp"
+        android:text="AI Image Scan"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
+        android:layout_marginTop="120dp"
+        android:backgroundTint="@color/Black"
         android:text="Take Picture"
         android:textAllCaps="false"
         android:textSize="21sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
         tools:ignore="MissingConstraints" />
 
     <ImageView
@@ -23,50 +51,148 @@
         android:layout_width="370sp"
         android:layout_height="370sp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10sp"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Classified as:"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:id="@+id/classified"
-        android:layout_below="@+id/imageView"
-        android:layout_marginTop="10sp"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text=""
-        android:textColor="#C30000"
-        android:textStyle="bold"
-        android:textSize="27sp"
-        android:id="@+id/result"
-        android:layout_below="@+id/classified"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/confidencesText"
-        android:text="Confidences:"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/result"
-        android:layout_marginTop="30sp"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text=""
-        android:textColor="#000"
-        android:textSize="22sp"
-        android:id="@+id/confidence"
-        android:layout_below="@+id/confidencesText"
+        android:layout_marginTop="84dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.609"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/classified"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:text="Classified as:"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/result"
+        android:background="@color/white"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/classified"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:text=""
+        android:textColor="#C30000"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/classified"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/confidencesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/result"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:text="Confidences:"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/confidence"
+        android:background="@color/white"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confidencesText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:text=""
+        android:textColor="#000"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/confidencesText"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/Button_Home"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:layout_marginStart="5dp"
+        android:backgroundTint="@color/Black"
+        android:drawableTop="@android:drawable/ic_menu_compass"
+        android:text="Home"
+        android:onClick="callHome"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+    <Button
+        android:id="@+id/Button_History"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:layout_marginStart="10dp"
+        android:backgroundTint="@color/Black"
+        android:drawableTop="@android:drawable/ic_menu_recent_history"
+        android:onClick="CallRecentSearches"
+        android:text="History"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toEndOf="@+id/Button_Home"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+    <Button
+        android:id="@+id/Button_Search"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/Black"
+        android:drawableTop="@android:drawable/ic_menu_search"
+        android:onClick="callSearch"
+        android:text="Searches"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/Button_ImageScanner"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+    <Button
+        android:id="@+id/Button_ImageScanner"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/Black"
+        android:drawableTop="@android:drawable/ic_menu_camera"
+        android:text="AI Scan"
+        android:onClick="callImageScanner"
+        android:textSize="12sp"
+        android:drawableTint="@color/american_rose"
+        android:textColor="@color/american_rose"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/Button_History"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/Black"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

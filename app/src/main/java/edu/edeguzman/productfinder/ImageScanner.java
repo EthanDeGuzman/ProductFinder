@@ -127,4 +127,24 @@ public class ImageScanner extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    public void callHome(View view) {
+        Intent showHome= new Intent(this, MainActivity.class);
+        startActivity(showHome);
+    }
+
+    public void callSearch(View view) {
+        Intent showSearch = new Intent(this, SearchResults.class);
+        startActivity(showSearch);
+    }
+
+    public void CallRecentSearches(View view) {
+        Intent showHistory = new Intent(this, SearchHistory.class);
+        startActivity(showHistory);
+    }
+
+    public void callImageScanner(View view) {
+        Intent showImageScanner = new Intent(this, ImageScanner.class);
+        startActivity(showImageScanner);
+    }
 }

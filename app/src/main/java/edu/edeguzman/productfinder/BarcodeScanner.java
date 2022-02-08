@@ -1,29 +1,31 @@
 package edu.edeguzman.productfinder;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -35,8 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BarcodeScanner extends AppCompatActivity {
 
@@ -47,8 +47,10 @@ public class BarcodeScanner extends AppCompatActivity {
     //This class provides methods to play DTMF tones
     private ToneGenerator toneGen1;
     private TextView barcodeText;
-    private String barcodeData;
+    private String barcodeData, name;
     private Button Back;
+    private RequestQueue queue;
+    private String tempName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +128,7 @@ public class BarcodeScanner extends AppCompatActivity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() != 0) {
-
+                    barcodeDetector.release();
                     barcodeText.post(new Runnable() {
                         @Override
                         public void run() {
@@ -142,6 +144,8 @@ public class BarcodeScanner extends AppCompatActivity {
                                 toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
                             }
 
+                            //When barcode is scanned convert to product name
+                            convertBarcode(barcodeData);
                         }
                     });
                 }
@@ -149,4 +153,79 @@ public class BarcodeScanner extends AppCompatActivity {
         });
     }
 
+    private void convertBarcode(String query) {
+        String token = "731584b4ddd0b2a2f7ffb1c2f1636d00e0a5db44fa88ea483f009d719b97743d";
+        String url = "https://api.ean-search.org/api?token=" + token + "&op=barcode-lookup&format=json&ean=" + query;
+
+        queue = Volley.newRequestQueue(this);
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for(int i = 0; i < response.length(); i++){
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(i);
+
+                                name = jsonObject.getString("name");
+
+                                barcodeText.setText(name);
+                                //Show the product name first to make sure it is correct
+                                showProductName();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+    }
+
+    private void showResults(){
+        Intent showResults = new Intent(this, Results.class);
+        showResults.putExtra("query", name);
+        startActivity(showResults);
+    }
+
+    public void showProductName() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Product Name")
+                .setMessage("Change the product name if this is the wrong product");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setText(name);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                tempName = input.getText().toString();
+
+                //Show results page
+                showResults();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 }

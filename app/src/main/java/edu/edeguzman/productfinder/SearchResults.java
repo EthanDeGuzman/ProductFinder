@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -17,10 +18,13 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Results extends AppCompatActivity {
+public class SearchResults extends AppCompatActivity {
     private String ebayUrl, amazonUrl, aliExpressUrl, query;
     private RequestQueue queue;
     private String s1[], s2[], s3[];
@@ -31,7 +35,7 @@ public class Results extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_results);
+        setContentView(R.layout.activity_search_results);
 
         rview = findViewById(R.id.recyclerView);
 
@@ -43,9 +47,25 @@ public class Results extends AppCompatActivity {
         rview.setAdapter(recyclerAdapter);
         rview.setLayoutManager(new LinearLayoutManager(this));
 
-        Bundle extras = getIntent().getExtras();
-        query = extras.getString("query");
+        SearchView search =  findViewById(R.id.searchView);
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                query = search.getQuery().toString();
+                callApis();
+                search.setQuery("", false);
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+    }
+
+    protected void callApis(){
         //Declare URls and call methods (Euro Based)
         ebayUrl ="https://ebay-products-search-scraper.p.rapidapi.com/products?query=" + query + "&page=1&Item_Location=europe";
         amazonUrl = "https://amazon-deutschland-data-scraper.p.rapidapi.com/search/" + query + "?api_key=7c3c12edf5e0523209099e036c847ef1";
@@ -212,7 +232,7 @@ public class Results extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Something went wrong in Ali Express API", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Something went wrong in AliExpress API", Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
             }
         }) {
