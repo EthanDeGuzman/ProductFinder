@@ -47,24 +47,17 @@
 
 
             <TextView
-                android:id="@+id/myDescView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxHeight="50dp"
-                android:padding="16dp"
-                android:text="Description"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-            <TextView
                 android:id="@+id/myPriceView"
-                android:layout_width="wrap_content"
+                android:layout_width="402dp"
                 android:layout_height="wrap_content"
 
 
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="0dp"
                 android:maxHeight="50dp"
                 android:padding="16dp"
-                android:layout_alignParentRight="true"
                 android:text="Price"
                 android:textColor="@color/white"
                 android:textSize="16sp" />

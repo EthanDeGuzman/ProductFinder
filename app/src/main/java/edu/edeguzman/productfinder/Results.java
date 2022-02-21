@@ -83,23 +83,30 @@ public class Results extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject obj = new JSONObject(response);
-                            JSONArray array = obj.getJSONArray("products");
+                            if (response == null || response == "" || response.isEmpty()){
+                                productsList.add(new Products("No Results Found","",""));
 
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject products = array.getJSONObject(i);
+                                setRecyclerView();
+                            }
+                            else{
+                                JSONObject obj = new JSONObject(response);
+                                JSONArray array = obj.getJSONArray("products");
 
-                                String name = products.getString("title");
-                                String price = products.getString("price");
-                                String link = products.getString("productLink");
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject products = array.getJSONObject(i);
+
+                                    String name = products.getString("title");
+                                    String price = products.getString("price");
+                                    String link = products.getString("productLink");
 
 
-                                productsList.add(new Products(""+ name,"" + link,"€" + price));
+                                    productsList.add(new Products(""+ name,"" + link,"€" + price));
 
-                                counter++;
+                                    counter++;
 
-                                rview.setAdapter(recyclerAdapter);
+                                    rview.setAdapter(recyclerAdapter);
 
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -141,23 +148,30 @@ public class Results extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject obj = new JSONObject(response);
-                            JSONArray array = obj.getJSONArray("results");
+                            if (response == null || response == "" || response.isEmpty()){
+                                productsList.add(new Products("No Results Found","",""));
 
-                            for(int i = 0; i < 5; i++){
-                                JSONObject products = array.getJSONObject(i);
+                                setRecyclerView();
+                            }
+                            else{
+                                JSONObject obj = new JSONObject(response);
+                                JSONArray array = obj.getJSONArray("results");
 
-                                String name = products.getString("name");
-                                String price = products.getString("price");
-                                String link = products.getString("url");
+                                for(int i = 0; i < 5; i++){
+                                    JSONObject products = array.getJSONObject(i);
+
+                                    String name = products.getString("name");
+                                    String price = products.getString("price");
+                                    String link = products.getString("url");
 
 
-                                productsList.add(new Products(""+ name,"" + link,"€" + price));
+                                    productsList.add(new Products(""+ name,"" + link,"€" + price));
 
-                                counter++;
+                                    counter++;
 
-                                rview.setAdapter(recyclerAdapter);
+                                    rview.setAdapter(recyclerAdapter);
 
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -199,25 +213,32 @@ public class Results extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject obj = new JSONObject(response);
-                            JSONArray array = obj.getJSONArray("docs");
+                            if (response == null || response == "" || response.isEmpty()){
+                                productsList.add(new Products("No Results Found","",""));
 
-                            for(int i = 0; i < 5; i++){
-                                JSONObject data = array.getJSONObject(i);
+                                setRecyclerView();
+                            }
+                            else{
+                                JSONObject obj = new JSONObject(response);
+                                JSONArray array = obj.getJSONArray("docs");
 
-                                String name = data.getString("product_title");
-                                String price = data.getString("app_sale_price");
-                                String link = data.getString("product_detail_url");
+                                for(int i = 0; i < 5; i++){
+                                    JSONObject data = array.getJSONObject(i);
 
-                                s1[counter] = name;
-                                s2[counter] = "€" + price;
-                                s3[counter] = link;
+                                    String name = data.getString("product_title");
+                                    String price = data.getString("app_sale_price");
+                                    String link = data.getString("product_detail_url");
 
-                                productsList.add(new Products(""+ name,"" + link,"€" + price));
+                                    s1[counter] = name;
+                                    s2[counter] = "€" + price;
+                                    s3[counter] = link;
 
-                                counter++;
+                                    productsList.add(new Products(""+ name,"" + link,"€" + price));
 
-                                rview.setAdapter(recyclerAdapter);
+                                    counter++;
+
+                                    rview.setAdapter(recyclerAdapter);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             public void surfaceDestroyed(SurfaceHolder holder) {
                 cameraSource.stop();
             }
+
         });
 
 
@@ -157,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                                 name = jsonObject.getString("name");
 
                                 barcodeText.setText(name);
+
                                 //Show the product name first to make sure it is correct
                                 showProductName();
                             } catch (JSONException e) {
@@ -213,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                initialiseDetectorsAndSources();
             }
         });
 

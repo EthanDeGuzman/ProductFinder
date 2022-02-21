@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,8 +81,8 @@ public class SearchResults extends AppCompatActivity {
         productsList = new ArrayList<>();
 
         searchEbay(ebayUrl,productsList);
-        searchAmazon(amazonUrl,productsList);
-        searchAliExpress(aliExpressUrl,productsList);
+        //searchAmazon(amazonUrl,productsList);
+        //searchAliExpress(aliExpressUrl,productsList);
     }
 
     protected void searchEbay(String url, List<Products> productsList) {
@@ -95,23 +96,48 @@ public class SearchResults extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject obj = new JSONObject(response);
-                            JSONArray array = obj.getJSONArray("products");
-
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject products = array.getJSONObject(i);
-
-                                String name = products.getString("title");
-                                String price = products.getString("price");
-                                String link = products.getString("productLink");
-
-                                productsList.add(new Products(""+ name,"" + link,"€" + price));
-
-
-                                counter++;
+                            if (response == null || response == "" || response.isEmpty()){
+                                productsList.add(new Products("No Results Found","",""));
 
                                 setRecyclerView();
+                            }
+                            else {
+                                JSONObject obj = new JSONObject(response);
+                                JSONArray array = obj.getJSONArray("products");
 
+                                for (int i = 0; i < 5; i++) {
+                                    JSONObject products = array.getJSONObject(i);
+
+                                    String name = products.getString("title");
+                                    String price = products.getString("price");
+                                    String link = products.getString("productLink");
+
+                                    String splitPrice[] = price.split(" ");
+
+                                    for (int x = 0; x < splitPrice.length; x++) {
+
+                                        if (!splitPrice[x].equals("to")){
+                                            //Get rid of Dollar Sign
+                                            splitPrice[x] = splitPrice[x].replace("$", "");
+                                            double tempPrice = Double.parseDouble(splitPrice[x]);
+
+                                            //Change price to euro
+                                            tempPrice = tempPrice * 0.88;
+
+                                            //Update array and format to 2 decimal places
+                                            splitPrice[x] = String.valueOf(tempPrice);
+                                            splitPrice[x] = String.format("%.2f", new BigDecimal(splitPrice[x]));
+
+                                            price = splitPrice[x];
+                                        }
+                                    }
+
+                                    productsList.add(new Products("" + name, "" + link, "€" + price));
+
+                                    counter++;
+
+                                    setRecyclerView();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -153,23 +179,28 @@ public class SearchResults extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject obj = new JSONObject(response);
-                            JSONArray array = obj.getJSONArray("results");
-
-                            for(int i = 0; i < 5; i++){
-                                JSONObject products = array.getJSONObject(i);
-
-                                String name = products.getString("name");
-                                String price = products.getString("price");
-                                String link = products.getString("url");
-
-
-                                productsList.add(new Products(""+ name,"€" + price,"" + link));
-
-                                counter++;
+                            if (response == null || response == "" || response.isEmpty()){
+                                productsList.add(new Products("No Results Found","",""));
 
                                 setRecyclerView();
+                            }
+                            else{
+                                JSONObject obj = new JSONObject(response);
+                                JSONArray array = obj.getJSONArray("results");
 
+                                for(int i = 0; i < 5; i++){
+                                    JSONObject products = array.getJSONObject(i);
+
+                                    String name = products.getString("name");
+                                    String price = products.getString("price");
+                                    String link = products.getString("url");
+
+                                    productsList.add(new Products(""+ name,"€" + price,"" + link));
+
+                                    counter++;
+
+                                    setRecyclerView();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -212,22 +243,28 @@ public class SearchResults extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject obj = new JSONObject(response);
-                            JSONArray array = obj.getJSONArray("docs");
-
-                            for(int i = 0; i < 5; i++){
-                                JSONObject data = array.getJSONObject(i);
-
-                                String name = data.getString("product_title");
-                                String price = data.getString("app_sale_price");
-                                String link = data.getString("product_detail_url");
-
-
-                                productsList.add(new Products(""+ name,"€" + price,"" + link));
-
-                                counter++;
+                            if (response == null || response == "" || response.isEmpty()){
+                                productsList.add(new Products("No Results Found","",""));
 
                                 setRecyclerView();
+                            }
+                            else{
+                                JSONObject obj = new JSONObject(response);
+                                JSONArray array = obj.getJSONArray("docs");
+
+                                for(int i = 0; i < 5; i++){
+                                    JSONObject data = array.getJSONObject(i);
+
+                                    String name = data.getString("product_title");
+                                    String price = data.getString("app_sale_price");
+                                    String link = data.getString("product_detail_url");
+
+                                    productsList.add(new Products(""+ name,"€" + price,"" + link));
+
+                                    counter++;
+
+                                    setRecyclerView();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
