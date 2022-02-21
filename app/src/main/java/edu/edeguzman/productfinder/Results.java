@@ -17,13 +17,17 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Results extends AppCompatActivity {
     private String ebayUrl, amazonUrl, aliExpressUrl, query;
     private RequestQueue queue;
     private String s1[], s2[], s3[];
+    private List<Products> productsList;
     private RecyclerView rview;
     private int counter=1;
     private myAdapter recyclerAdapter;
@@ -39,10 +43,6 @@ public class Results extends AppCompatActivity {
         s2 = getResources().getStringArray(R.array.ProductPrice);
         s3 = getResources().getStringArray(R.array.ProductLink);
 
-        recyclerAdapter = new myAdapter(this, s1, s2, s3);
-        rview.setAdapter(recyclerAdapter);
-        rview.setLayoutManager(new LinearLayoutManager(this));
-
         Bundle extras = getIntent().getExtras();
         query = extras.getString("query");
 
@@ -51,12 +51,28 @@ public class Results extends AppCompatActivity {
         amazonUrl = "https://amazon-deutschland-data-scraper.p.rapidapi.com/search/" + query + "?api_key=7c3c12edf5e0523209099e036c847ef1";
         aliExpressUrl = "https://magic-aliexpress1.p.rapidapi.com/api/products/search?name=" + query + "&sort=SALE_PRICE_ASC&page=1&targetCurrency=EUR&lg=en";
 
-        searchEbay(ebayUrl);
-        searchAmazon(amazonUrl);
-        searchAliExpress(aliExpressUrl);
+        getData(ebayUrl, amazonUrl, aliExpressUrl);
+        setRecyclerView();
     }
 
-    protected void searchEbay(String url) {
+    protected void setRecyclerView(){
+        recyclerAdapter = new myAdapter(productsList);
+        rview.setAdapter(recyclerAdapter);
+        rview.setLayoutManager(new LinearLayoutManager(this));
+        rview.setHasFixedSize(true);
+    }
+
+    protected void getData(String ebayUrl, String amazonUrl, String aliExpressUrl) {
+        productsList = new ArrayList<>();
+
+        searchEbay(ebayUrl,productsList);
+        searchAmazon(amazonUrl,productsList);
+        searchAliExpress(aliExpressUrl,productsList);
+    }
+
+
+
+    protected void searchEbay(String url, List<Products> productsList) {
         //Replace all Spaces in the Url with %20 for query
         url = url.replaceAll(" ", "%20");
 
@@ -77,9 +93,8 @@ public class Results extends AppCompatActivity {
                                 String price = products.getString("price");
                                 String link = products.getString("productLink");
 
-                                s1[counter] = name;
-                                s2[counter] = price;
-                                s3[counter] = link;
+
+                                productsList.add(new Products(""+ name,"" + link,"€" + price));
 
                                 counter++;
 
@@ -116,7 +131,7 @@ public class Results extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    protected void searchAmazon(String url){
+    protected void searchAmazon(String url, List<Products> productsList){
         //Replace all Spaces in the Url with %20 for query
         url = url.replaceAll(" ", "%20");
 
@@ -136,9 +151,8 @@ public class Results extends AppCompatActivity {
                                 String price = products.getString("price");
                                 String link = products.getString("url");
 
-                                s1[counter] = name;
-                                s2[counter] = "€" + price;
-                                s3[counter] = link;
+
+                                productsList.add(new Products(""+ name,"" + link,"€" + price));
 
                                 counter++;
 
@@ -173,10 +187,9 @@ public class Results extends AppCompatActivity {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
-
     }
 
-    protected void searchAliExpress(String url){
+    protected void searchAliExpress(String url, List<Products> productsList){
         //Replace all Spaces in the Url with %20 for query
         url = url.replaceAll(" ", "%20");
 
@@ -199,6 +212,8 @@ public class Results extends AppCompatActivity {
                                 s1[counter] = name;
                                 s2[counter] = "€" + price;
                                 s3[counter] = link;
+
+                                productsList.add(new Products(""+ name,"" + link,"€" + price));
 
                                 counter++;
 

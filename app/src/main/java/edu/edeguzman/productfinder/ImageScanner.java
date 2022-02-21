@@ -1,8 +1,5 @@
 package edu.edeguzman.productfinder;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
@@ -105,6 +105,8 @@ public class ImageScanner extends AppCompatActivity {
             }
             confidence.setText(s);
 
+            //Call Result Page and pass result as parameter
+            callResult(classes[maxPos]);
 
             // Releases model resources if no longer used.
             model.close();
@@ -126,6 +128,12 @@ public class ImageScanner extends AppCompatActivity {
             classifyImage(image);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void callResult(String query){
+        Intent showResults = new Intent(this, Results.class);
+        showResults.putExtra("query", query);
+        startActivity(showResults);
     }
 
     public void callHome(View view) {

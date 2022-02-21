@@ -13,9 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-
 public class SearchHistory extends AppCompatActivity {
-
     private SearchesDataSource datasource;
     public ListView list;
 
@@ -34,7 +32,6 @@ public class SearchHistory extends AppCompatActivity {
         // elements in a ListView
         ArrayAdapter<Searches> adapter = new ArrayAdapter<Searches>(this,
                 android.R.layout.simple_list_item_1, values);
-
 
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -59,11 +56,8 @@ public class SearchHistory extends AppCompatActivity {
                         .setNegativeButton(android.R.string.no, null)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
-
             }
         });
-
-
     }
 
     public void callHome(View view) {
@@ -97,6 +91,5 @@ public class SearchHistory extends AppCompatActivity {
         datasource.close();
         super.onPause();
     }
-
 
 }

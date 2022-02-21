@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-
 public class SQLiteSearchDB extends SQLiteOpenHelper {
 
     public static final String TABLE_SEARCHES = "searches";
@@ -36,6 +35,5 @@ public class SQLiteSearchDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCHES);
         onCreate(db);
     }
-
 
 }

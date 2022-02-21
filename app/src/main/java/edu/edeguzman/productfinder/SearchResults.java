@@ -3,6 +3,8 @@ package edu.edeguzman.productfinder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SearchView;
@@ -19,18 +21,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SearchResults extends AppCompatActivity {
     private String ebayUrl, amazonUrl, aliExpressUrl, query;
     private RequestQueue queue;
-    private String s1[], s2[], s3[];
     private RecyclerView rview;
     private int counter=1;
     private myAdapter recyclerAdapter;
+    private SearchesDataSource datasource;
+    private List<Products> productsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +41,15 @@ public class SearchResults extends AppCompatActivity {
         setContentView(R.layout.activity_search_results);
 
         rview = findViewById(R.id.recyclerView);
-
-        s1 = getResources().getStringArray(R.array.ProductName);
-        s2 = getResources().getStringArray(R.array.ProductPrice);
-        s3 = getResources().getStringArray(R.array.ProductLink);
-
-        recyclerAdapter = new myAdapter(this, s1, s2, s3);
-        rview.setAdapter(recyclerAdapter);
-        rview.setLayoutManager(new LinearLayoutManager(this));
-
+        datasource = new SearchesDataSource(this);
+        datasource.open();
         SearchView search =  findViewById(R.id.searchView);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 query = search.getQuery().toString();
-                callApis();
+                datasource.createSearch_Term(query);
+                callApis(query);
                 search.setQuery("", false);
                 return false;
             }
@@ -63,20 +60,31 @@ public class SearchResults extends AppCompatActivity {
             }
         });
 
+        recyclerAdapter = new myAdapter(productsList);
     }
 
-    protected void callApis(){
+    protected void setRecyclerView(){
+
+        recyclerAdapter = new myAdapter(productsList);
+        rview.setAdapter(recyclerAdapter);
+        rview.setLayoutManager(new LinearLayoutManager(this));
+        rview.setHasFixedSize(true);
+    }
+
+    protected void callApis(String query){
         //Declare URls and call methods (Euro Based)
         ebayUrl ="https://ebay-products-search-scraper.p.rapidapi.com/products?query=" + query + "&page=1&Item_Location=europe";
         amazonUrl = "https://amazon-deutschland-data-scraper.p.rapidapi.com/search/" + query + "?api_key=7c3c12edf5e0523209099e036c847ef1";
         aliExpressUrl = "https://magic-aliexpress1.p.rapidapi.com/api/products/search?name=" + query + "&sort=SALE_PRICE_ASC&page=1&targetCurrency=EUR&lg=en";
 
-        searchEbay(ebayUrl);
-        searchAmazon(amazonUrl);
-        searchAliExpress(aliExpressUrl);
+        productsList = new ArrayList<>();
+
+        searchEbay(ebayUrl,productsList);
+        searchAmazon(amazonUrl,productsList);
+        searchAliExpress(aliExpressUrl,productsList);
     }
 
-    protected void searchEbay(String url) {
+    protected void searchEbay(String url, List<Products> productsList) {
         //Replace all Spaces in the Url with %20 for query
         url = url.replaceAll(" ", "%20");
 
@@ -97,13 +105,12 @@ public class SearchResults extends AppCompatActivity {
                                 String price = products.getString("price");
                                 String link = products.getString("productLink");
 
-                                s1[counter] = name;
-                                s2[counter] = price;
-                                s3[counter] = link;
+                                productsList.add(new Products(""+ name,"" + link,"€" + price));
+
 
                                 counter++;
 
-                                rview.setAdapter(recyclerAdapter);
+                                setRecyclerView();
 
                             }
                         } catch (JSONException e) {
@@ -136,7 +143,7 @@ public class SearchResults extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    protected void searchAmazon(String url){
+    protected void searchAmazon(String url, List<Products> productsList){
         //Replace all Spaces in the Url with %20 for query
         url = url.replaceAll(" ", "%20");
 
@@ -156,13 +163,12 @@ public class SearchResults extends AppCompatActivity {
                                 String price = products.getString("price");
                                 String link = products.getString("url");
 
-                                s1[counter] = name;
-                                s2[counter] = "€" + price;
-                                s3[counter] = link;
+
+                                productsList.add(new Products(""+ name,"€" + price,"" + link));
 
                                 counter++;
 
-                                rview.setAdapter(recyclerAdapter);
+                                setRecyclerView();
 
                             }
                         } catch (JSONException e) {
@@ -196,7 +202,7 @@ public class SearchResults extends AppCompatActivity {
 
     }
 
-    protected void searchAliExpress(String url){
+    protected void searchAliExpress(String url, List<Products> productsList){
         //Replace all Spaces in the Url with %20 for query
         url = url.replaceAll(" ", "%20");
 
@@ -216,13 +222,12 @@ public class SearchResults extends AppCompatActivity {
                                 String price = data.getString("app_sale_price");
                                 String link = data.getString("product_detail_url");
 
-                                s1[counter] = name;
-                                s2[counter] = "€" + price;
-                                s3[counter] = link;
+
+                                productsList.add(new Products(""+ name,"€" + price,"" + link));
 
                                 counter++;
 
-                                rview.setAdapter(recyclerAdapter);
+                                setRecyclerView();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -255,19 +260,22 @@ public class SearchResults extends AppCompatActivity {
     }
 
     public void callHome(View view) {
-        finish();
+        Intent showHome= new Intent(this, MainActivity.class);
+        startActivity(showHome);
     }
 
     public void callSearch(View view) {
-        finish();
+        Intent showSearch = new Intent(this, SearchResults.class);
+        startActivity(showSearch);
     }
 
     public void CallRecentSearches(View view) {
-        finish();
+        Intent showHistory = new Intent(this, SearchHistory.class);
+        startActivity(showHistory);
     }
 
     public void callImageScanner(View view) {
-        finish();
+        Intent showImageScanner = new Intent(this, ImageScanner.class);
+        startActivity(showImageScanner);
     }
-
 }

@@ -42,12 +42,12 @@ public class MainActivity extends AppCompatActivity {
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
-    //This class provides methods to play DTMF tones
     private ToneGenerator toneGen1;
     private String barcodeData, name;
     private RequestQueue queue;
     private String tempName = "";
     private TextView barcodeText;
+    private SearchesDataSource datasource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
         toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
         barcodeText = findViewById(R.id.barcode_text);
         surfaceView = findViewById(R.id.surface_view);
+
+        datasource = new SearchesDataSource(this);
+        datasource.open();
+
         initialiseDetectorsAndSources();
     }
 
@@ -87,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
 
             //Required methods for SurfaceHolder
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void convertBarcode(String query) {
-        String token = "731584b4ddd0b2a2f7ffb1c2f1636d00e0a5db44fa88ea483f009d719b97743d";
+        String token = "afb9feace2da918945763b1630efd7adb5bbc86425d833f8da4175d3c6d94d1d";
         String url = "https://api.ean-search.org/api?token=" + token + "&op=barcode-lookup&format=json&ean=" + query;
 
         queue = Volley.newRequestQueue(this);
@@ -185,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
     public void showProductName() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("Product Name")
-                .setMessage("Change the product name if this is the wrong product");
+                .setMessage("Click here to change the product");
 
         // Set up the input
         final EditText input = new EditText(this);
@@ -200,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 tempName = input.getText().toString();
 
+                datasource.createSearch_Term(tempName);
+
                 //Show results page
                 showResults();
             }
@@ -212,6 +217,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         builder.show();
+    }
+
+    public void callHome(View view) {
+        Intent showHome= new Intent(this, MainActivity.class);
+        startActivity(showHome);
     }
 
     public void callSearch(View view) {

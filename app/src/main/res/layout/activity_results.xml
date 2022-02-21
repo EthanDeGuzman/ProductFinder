@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey"
+    android:background="@color/onyx"
     tools:context=".Results">
 
     <ImageView
@@ -12,19 +12,21 @@
         android:layout_width="0dp"
         android:layout_height="55dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@color/charcoal" />
+        android:src="@color/midnight_blue"/>
 
     <Button
         android:id="@+id/Button_Home"
         android:layout_width="wrap_content"
         android:layout_height="75dp"
         android:layout_marginStart="5dp"
-        android:backgroundTint="@color/Black"
+        android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_compass"
-        android:text="Home"
         android:onClick="callHome"
+        android:text="Home"
+        android:textColor="#D7CCC8"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
@@ -35,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="75dp"
         android:layout_marginStart="10dp"
-        android:backgroundTint="@color/Black"
+        android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_recent_history"
         android:onClick="CallRecentSearches"
         android:text="History"
@@ -49,10 +51,12 @@
         android:layout_width="wrap_content"
         android:layout_height="75dp"
         android:layout_marginEnd="10dp"
-        android:backgroundTint="@color/Black"
+        android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_search"
+        android:drawableTint="@color/white"
         android:onClick="callSearch"
         android:text="Searches"
+        android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toStartOf="@+id/Button_ImageScanner"
@@ -63,10 +67,10 @@
         android:layout_width="wrap_content"
         android:layout_height="75dp"
         android:layout_marginEnd="5dp"
-        android:backgroundTint="@color/Black"
+        android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_camera"
-        android:text="AI Scan"
         android:onClick="callImageScanner"
+        android:text="AI Scan"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
@@ -78,8 +82,7 @@
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="80dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/Black"
+        android:background="@color/midnight_blue"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -93,20 +96,20 @@
         android:layout_height="30dp"
         android:layout_marginTop="15dp"
         android:text="Search Results"
-        android:textColor="@color/white"
         android:textAlignment="center"
+        android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <TextView
         android:id="@+id/TopResultsTitle"
         android:layout_width="106dp"
         android:layout_height="31dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="91dp"
         android:text="Top results:"
+        android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -115,11 +118,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:background="@color/white"
         android:layout_width="0dp"
         android:layout_height="450dp"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/onyx"
         android:scrollbars="vertical"
         app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -127,6 +130,5 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TopResultsTitle" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

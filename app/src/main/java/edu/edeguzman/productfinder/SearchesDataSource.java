@@ -9,11 +9,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-
-
 public class SearchesDataSource {
-
-
     private SQLiteDatabase database;
     private SQLiteSearchDB dbHelper;
     private String[] allColumns = { SQLiteSearchDB.COLUMN_ID,
@@ -75,6 +71,4 @@ public class SearchesDataSource {
         search_term.setSearchTerm(cursor.getString(1));
         return search_term;
     }
-
-
 }
