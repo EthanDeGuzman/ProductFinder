@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private String tempName = "";
     private TextView barcodeText;
     private SearchesDataSource datasource;
+    private boolean isScannable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-                if (barcodes.size() != 0) {
-                    barcodeDetector.release();
+                if (barcodes.size() != 0 && isScannable == true) {
                     barcodeText.post(new Runnable() {
                         @Override
                         public void run() {
@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
 
                             //When barcode is scanned convert to product name
                             convertBarcode(barcodeData);
+
+                            isScannable = false;
                         }
                     });
                 }
@@ -215,7 +217,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                initialiseDetectorsAndSources();
+
+                isScannable = true;
             }
         });
 
