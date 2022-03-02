@@ -54,7 +54,8 @@ public class SearchResults extends AppCompatActivity {
                 datasource.createSearch_Term(query);
                 callApis(query);
                 search.setQuery("", false);
-                return false;
+                search.clearFocus();
+                return true;
             }
 
             @Override
