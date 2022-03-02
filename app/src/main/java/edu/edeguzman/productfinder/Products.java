@@ -1,8 +1,11 @@
 package edu.edeguzman.productfinder;
 
+import android.content.Intent;
+import android.view.View;
+
 public class Products {
 
-    private String pName, pLink, pPrice;
+    private String pName, pLink, pPrice, pImage;
     private boolean expandable;
 
     public boolean isExpandable() {
@@ -13,10 +16,11 @@ public class Products {
         this.expandable = expandable;
     }
 
-    public Products(String pName, String pLink, String pPrice) {
+    public Products(String pName, String pLink, String pPrice, String pImage) {
         this.pName = pName;
         this.pLink = pLink;
         this.pPrice = pPrice;
+        this.pImage = pImage;
         this.expandable = false;
     }
 
@@ -32,6 +36,10 @@ public class Products {
         return pPrice;
     }
 
+    public String getpImage() {
+        return pImage;
+    }
+
     public void setpName(String pName) {
         this.pName = pName;
     }
@@ -44,12 +52,18 @@ public class Products {
         this.pPrice = pPrice;
     }
 
+    public void setpImage(String pImage) { this.pImage = pImage; }
+
     @Override
     public String toString() {
         return "Products{" +
-                "pName='" + pName + '\'' +
+                " pName='" + pName + '\'' +
                 ", pLink='" + pLink + '\'' +
                 ", pPrice='" + pPrice + '\'' +
+                ", pImage='" + pImage + '\'' +
                 '}';
     }
+
+
+
 }

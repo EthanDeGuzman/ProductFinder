@@ -1,8 +1,10 @@
 package edu.edeguzman.productfinder;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,9 +17,11 @@ import java.util.List;
 public class myAdapter extends RecyclerView.Adapter<myAdapter.MyViewHolder> {
 
     List<Products> productsList;
+    private RecyclerViewClickListener listener;
 
-    public myAdapter(List<Products> productsList) {
+    public myAdapter(List<Products> productsList, RecyclerViewClickListener listener) {
         this.productsList = productsList;
+        this.listener= listener;
     }
 
     @NonNull
@@ -46,7 +50,7 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.MyViewHolder> {
         return productsList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView myText1, myText2, myText3;
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
@@ -60,14 +64,30 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.MyViewHolder> {
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
 
-            linearLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Products products = productsList.get(getAdapterPosition());
-                    products.setExpandable(!products.isExpandable());
-                    notifyItemChanged(getAdapterPosition());
-                }
-            });
+            itemView.setOnClickListener(this);
+
+            //linearLayout.setOnClickListener(new View.OnClickListener() {
+            //    @Override
+             //   public void onClick(View v) {
+            //        Products products = productsList.get(getAdapterPosition());
+             //       products.setExpandable(!products.isExpandable());
+            //        notifyItemChanged(getAdapterPosition());
+            //    }
+          //  });
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            listener.onClick(view, getAdapterPosition());
         }
     }
+
+
+    public interface RecyclerViewClickListener{
+        void onClick(View v, int position);
+    }
+
+
+
 }

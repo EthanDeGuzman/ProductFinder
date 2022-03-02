@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SearchView;
@@ -35,6 +36,7 @@ public class SearchResults extends AppCompatActivity {
     private myAdapter recyclerAdapter;
     private SearchesDataSource datasource;
     private List<Products> productsList;
+    private myAdapter.RecyclerViewClickListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +63,30 @@ public class SearchResults extends AppCompatActivity {
             }
         });
 
-        recyclerAdapter = new myAdapter(productsList);
+        recyclerAdapter = new myAdapter(productsList,listener);
     }
 
     protected void setRecyclerView(){
 
-        recyclerAdapter = new myAdapter(productsList);
+        setOnClickListener();
+        recyclerAdapter = new myAdapter(productsList,listener);
         rview.setAdapter(recyclerAdapter);
         rview.setLayoutManager(new LinearLayoutManager(this));
         rview.setHasFixedSize(true);
+    }
+
+    private void setOnClickListener() {
+        listener = new myAdapter.RecyclerViewClickListener() {
+            @Override
+            public void onClick(View v, int position) {
+                Intent showProductPage = new Intent(getApplicationContext(),ProductPage.class);
+                showProductPage.putExtra("ProductName", productsList.get(position).getpName());
+                showProductPage.putExtra("ProductPrice", productsList.get(position).getpPrice());
+                showProductPage.putExtra("ProductLink", productsList.get(position).getpLink());
+                showProductPage.putExtra("ProductImage", productsList.get(position).getpImage());
+                startActivity(showProductPage);
+            }
+        };
     }
 
     protected void callApis(String query){
@@ -97,7 +114,7 @@ public class SearchResults extends AppCompatActivity {
                     public void onResponse(String response) {
                         try {
                             if (response == null || response == "" || response.isEmpty()){
-                                productsList.add(new Products("No Results Found","",""));
+                                productsList.add(new Products("No Results Found","","",""));
 
                                 setRecyclerView();
                             }
@@ -111,6 +128,7 @@ public class SearchResults extends AppCompatActivity {
                                     String name = products.getString("title");
                                     String price = products.getString("price");
                                     String link = products.getString("productLink");
+                                    String image = products.getString("image");
 
                                     String splitPrice[] = price.split(" ");
 
@@ -132,7 +150,7 @@ public class SearchResults extends AppCompatActivity {
                                         }
                                     }
 
-                                    productsList.add(new Products("" + name, "" + link, "€" + price));
+                                    productsList.add(new Products("" + name, "" + link, "€" + price, "" + image));
 
                                     counter++;
 
@@ -180,7 +198,7 @@ public class SearchResults extends AppCompatActivity {
                     public void onResponse(String response) {
                         try {
                             if (response == null || response == "" || response.isEmpty()){
-                                productsList.add(new Products("No Results Found","",""));
+                                productsList.add(new Products("No Results Found","","",""));
 
                                 setRecyclerView();
                             }
@@ -194,8 +212,9 @@ public class SearchResults extends AppCompatActivity {
                                     String name = products.getString("name");
                                     String price = products.getString("price");
                                     String link = products.getString("url");
+                                    String image = products.getString("image");
 
-                                    productsList.add(new Products(""+ name,"€" + price,"" + link));
+                                    productsList.add(new Products("" + name, "" + link, "€" + price, "" + image));
 
                                     counter++;
 
@@ -244,7 +263,7 @@ public class SearchResults extends AppCompatActivity {
                     public void onResponse(String response) {
                         try {
                             if (response == null || response == "" || response.isEmpty()){
-                                productsList.add(new Products("No Results Found","",""));
+                                productsList.add(new Products("No Results Found","","",""));
 
                                 setRecyclerView();
                             }
@@ -258,8 +277,9 @@ public class SearchResults extends AppCompatActivity {
                                     String name = data.getString("product_title");
                                     String price = data.getString("app_sale_price");
                                     String link = data.getString("product_detail_url");
+                                    String image = data.getString("product_main_image_url");
 
-                                    productsList.add(new Products(""+ name,"€" + price,"" + link));
+                                    productsList.add(new Products("" + name, "" + link, "€" + price, "" + image));
 
                                     counter++;
 

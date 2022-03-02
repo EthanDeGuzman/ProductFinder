@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProductFinder">
         <activity
+            android:name=".ProductPage"
+            android:exported="false" />
+        <activity
             android:name=".SearchHistory"
             android:exported="false" />
         <activity
