@@ -7,6 +7,38 @@
     android:background="@color/onyx"
     tools:context=".SearchResults">
 
+    <RelativeLayout
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/background"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/searchView"
+        app:layout_constraintTop_toBottomOf="@+id/BannerColour">
+
+
+        <Spinner
+            android:id="@+id/SortFilters"
+            android:layout_width="116dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:spinnerMode="dropdown"
+            tools:layout_editor_absoluteX="295dp"
+            tools:layout_editor_absoluteY="73dp" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@drawable/whitedownarrow" />
+
+    </RelativeLayout>
+
     <ImageView
         android:id="@+id/BannerColour"
         android:layout_width="0dp"
@@ -116,33 +148,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="450dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="15dp"
-        android:background="@color/onyx"
-        android:scrollbars="vertical"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="600dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TopResultsTitle" />
-
     <SearchView
         android:id="@+id/searchView"
-        android:layout_width="0dp"
-        android:layout_height="46dp"
+        android:layout_width="260dp"
+        android:layout_height="50dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="20dp"
-        app:queryBackground="@drawable/bg_white_rounded"
-        app:submitBackground="@drawable/bg_white_rounded"
-        android:background="@drawable/bg_white_rounded"
+        android:background="@drawable/background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BannerColour"
+        app:queryBackground="@drawable/background"
+        app:submitBackground="@drawable/background">
+
+    </SearchView>
+
+    <ExpandableListView
+        android:id="@+id/expandListView1"
+        android:layout_width="0dp"
+        android:layout_height="450dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="10dp"
+        android:fadeScrollbars="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PageTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/TopResultsTitle" >
+
+    </ExpandableListView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

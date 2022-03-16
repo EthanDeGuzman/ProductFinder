@@ -17,6 +17,20 @@
         app:layout_constraintTop_toTopOf="parent"
         android:src="@color/midnight_blue"/>
 
+    <Spinner
+        android:id="@+id/SortFilters"
+        android:layout_width="240dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="84dp"
+        android:background="@drawable/bg_white_rounded"
+        android:textColor="#D7CCC8"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/TopResultsTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BannerColour"
+        app:layout_constraintVertical_bias="0.0" />
+
     <Button
         android:id="@+id/Button_Home"
         android:layout_width="wrap_content"
@@ -116,18 +130,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/PageTitle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <ExpandableListView
+        android:id="@+id/expandListView1"
         android:layout_width="0dp"
         android:layout_height="450dp"
-        android:layout_marginStart="2dp"
         android:layout_marginTop="15dp"
         android:background="@color/onyx"
-        android:scrollbars="vertical"
-        app:layout_constrainedHeight="true"
+        android:fadeScrollbars="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="450dp"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TopResultsTitle" />
 

@@ -21,9 +21,11 @@
     <ListView
         android:id="@+id/lv"
         android:layout_width="407dp"
-        android:layout_height="450dp"
+        android:layout_height="520dp"
         android:layout_marginTop="70dp"
         android:background="@color/onyx"
+        android:fadeScrollbars="false"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />

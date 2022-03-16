@@ -2,6 +2,7 @@ package edu.edeguzman.productfinder;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -9,6 +10,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
 
 public class ProductPage extends AppCompatActivity {
@@ -23,10 +25,12 @@ public class ProductPage extends AppCompatActivity {
         ImageView productImageIV = findViewById(R.id.ProductImage);
         TextView webSellerLink = findViewById(R.id.SellerWebLink);
 
-        String linkText="";
+      String linkText="";
+
 
         webSellerLink.setClickable(true);
         webSellerLink.setMovementMethod(LinkMovementMethod.getInstance());
+
 
         String pName ="";
         String pPrice ="";
@@ -43,36 +47,49 @@ public class ProductPage extends AppCompatActivity {
             pImage = extras.getString("ProductImage");
         }
 
+
+
         productNameTV.setText(pName);
         productPriceTV.setText(pPrice);
         Picasso.get().load(pImage).into(productImageIV);
 
+
+
+
         linkText ="<a href='" + pLink + "'>Go to Seller Website:</a>";
         webSellerLink.setText(Html.fromHtml(linkText, Html.FROM_HTML_MODE_COMPACT));
+
+
     }
 
     public void callHome(View view) {
         Intent showHome= new Intent(this, MainActivity.class);
-        startActivity(showHome);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHome, b);
     }
 
     public void callSearch(View view) {
         Intent showSearch = new Intent(this, SearchResults.class);
-        startActivity(showSearch);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showSearch, b);
     }
 
     public void CallRecentSearches(View view) {
         Intent showHistory = new Intent(this, SearchHistory.class);
-        startActivity(showHistory);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHistory, b);
     }
 
     public void callImageScanner(View view) {
         Intent showImageScanner = new Intent(this, ImageScanner.class);
-        startActivity(showImageScanner);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showImageScanner,b);
     }
 
     public void callBack(View view) {
         finish();
     }
+
+
 
 }

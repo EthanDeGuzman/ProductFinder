@@ -3,93 +3,77 @@ package edu.edeguzman.productfinder;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class SearchHistory extends AppCompatActivity {
-    private SearchesDataSource datasource;
+
+    DatabaseHelper db;
     public ListView list;
+    public ArrayList<String> listItem;
+    public ArrayList<SearchTerms> arrayList;
+    SearchAdapter searchAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_history);
+
+        db = new DatabaseHelper(this);
+        listItem = new ArrayList<>();
+        arrayList = new ArrayList<>();
         list = (ListView) findViewById(R.id.lv);
+        loadDataInListView();
 
-        datasource = new SearchesDataSource(this);
-        datasource.open();
+    }
 
-        List<Searches> values = datasource.getAllSearches();
 
-        // use the SimpleCursorAdapter to show the
-        // elements in a ListView
-        ArrayAdapter<Searches> adapter = new ArrayAdapter<Searches>(this,
-                android.R.layout.simple_list_item_1, values);
+    public void loadDataInListView()
+    {
+        arrayList = db.GetAllData();
 
-        list.setAdapter(adapter);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                new AlertDialog.Builder(SearchHistory.this)
-                        .setTitle("Delete entry")
-                        .setMessage("Are you sure you want to delete this entry?")
+        searchAdapter = new SearchAdapter(this,arrayList);
+        list.setAdapter(searchAdapter);
+        searchAdapter.notifyDataSetChanged();
 
-                        // Specifying a listener allows you to take an action before dismissing the dialog.
-                        // The dialog is automatically dismissed when a dialog button is clicked.
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                datasource.deleteSearchTerm(values.get(position));
-                                values.remove(position);
-                                adapter.notifyDataSetChanged();
-                            }
-                        })
-
-                        // A null listener allows the button to dismiss the dialog and take no further action.
-                        .setNegativeButton(android.R.string.no, null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        });
     }
 
     public void callHome(View view) {
         Intent showHome= new Intent(this, MainActivity.class);
-        startActivity(showHome);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHome, b);
     }
 
     public void callSearch(View view) {
         Intent showSearch = new Intent(this, SearchResults.class);
-        startActivity(showSearch);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showSearch, b);
     }
 
     public void CallRecentSearches(View view) {
         Intent showHistory = new Intent(this, SearchHistory.class);
-        startActivity(showHistory);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHistory, b);
     }
 
     public void callImageScanner(View view) {
         Intent showImageScanner = new Intent(this, ImageScanner.class);
-        startActivity(showImageScanner);
-    }
-
-    @Override
-    protected void onResume() {
-        datasource.open();
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        datasource.close();
-        super.onPause();
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showImageScanner,b);
     }
 
 }

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +26,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -37,6 +39,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import maes.tech.intentanim.CustomIntent;
+
 public class MainActivity extends AppCompatActivity {
     private SurfaceView surfaceView;
     private BarcodeDetector barcodeDetector;
@@ -47,21 +51,21 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue queue;
     private String tempName = "";
     private TextView barcodeText;
-    private SearchesDataSource datasource;
     private boolean isScannable = true;
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = new DatabaseHelper(this);
+
         toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
         barcodeText = findViewById(R.id.barcode_text);
         surfaceView = findViewById(R.id.surface_view);
 
-        datasource = new SearchesDataSource(this);
-        datasource.open();
-
+        isScannable = true;
         initialiseDetectorsAndSources();
     }
 
@@ -149,21 +153,34 @@ public class MainActivity extends AppCompatActivity {
         String url = "https://api.ean-search.org/api?token=" + token + "&op=barcode-lookup&format=json&ean=" + query;
 
         queue = Volley.newRequestQueue(this);
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
+
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONArray response) {
-                        for(int i = 0; i < response.length(); i++){
+                    public void onResponse(String response) {
+                        //Convert String to JSON Array
+                        JSONArray array = null;
+                        try {
+                            array = new JSONArray(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        //Loop through array and get data
+                        for(int i = 0; i < array.length(); i++){
                             try {
-                                JSONObject jsonObject = response.getJSONObject(i);
-
-                                name = jsonObject.getString("name");
-
-                                barcodeText.setText(name);
-
-                                //Show the product name first to make sure it is correct
-                                showProductName();
-                            } catch (JSONException e) {
+                                JSONObject jsonObject = array.getJSONObject(i);
+                                if (jsonObject.getString("error") == null){
+                                    name = jsonObject.getString("name");
+                                    barcodeText.setText(name);
+                                    showProductName();
+                                }
+                                else{
+                                    name = "";
+                                    Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT).show();
+                                    showProductName();
+                                }
+                            }
+                            catch (JSONException e){
                                 e.printStackTrace();
                             }
                         }
@@ -171,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Something went wrong in EAN Database API", Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
             }
         });
@@ -185,14 +202,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void showResults(){
         Intent showResults = new Intent(this, Results.class);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
         showResults.putExtra("query", name);
-        startActivity(showResults);
+        startActivity(showResults, b);
     }
 
     public void showProductName() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle("Product Name")
-                .setMessage("Click here to change the product");
+        AlertDialog.Builder builder;
+        if (name == "" || name.isEmpty() || name == null){
+            builder = new AlertDialog.Builder(this)
+                    .setTitle("No Results Found!")
+                    .setMessage("Click here to Enter the product name")
+                    .setIcon(android.R.drawable.ic_dialog_alert);
+        }
+        else{
+            builder = new AlertDialog.Builder(this)
+                    .setTitle("Is This Your Product?")
+                    .setMessage("Click here to change the product name");
+        }
 
         // Set up the input
         final EditText input = new EditText(this);
@@ -207,7 +234,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 tempName = input.getText().toString();
 
-                datasource.createSearch_Term(tempName);
+                if (!tempName.equals("")&& db.insertData(tempName)) {
+                }
+                else{
+                }
 
                 //Show results page
                 showResults();
@@ -217,7 +247,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-
                 isScannable = true;
             }
         });
@@ -227,22 +256,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void callHome(View view) {
         Intent showHome= new Intent(this, MainActivity.class);
-        startActivity(showHome);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHome, b);
     }
 
     public void callSearch(View view) {
         Intent showSearch = new Intent(this, SearchResults.class);
-        startActivity(showSearch);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showSearch, b);
     }
 
     public void CallRecentSearches(View view) {
         Intent showHistory = new Intent(this, SearchHistory.class);
-        startActivity(showHistory);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHistory, b);
     }
 
     public void callImageScanner(View view) {
         Intent showImageScanner = new Intent(this, ImageScanner.class);
-        startActivity(showImageScanner);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showImageScanner, b);
     }
 
 }

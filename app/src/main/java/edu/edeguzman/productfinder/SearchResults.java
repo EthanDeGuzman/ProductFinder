@@ -1,14 +1,17 @@
 package edu.edeguzman.productfinder;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -24,70 +27,145 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SearchResults extends AppCompatActivity {
+public class SearchResults extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private String ebayUrl, amazonUrl, aliExpressUrl, query;
     private RequestQueue queue;
-    private RecyclerView rview;
     private int counter=1;
-    private myAdapter recyclerAdapter;
-    private SearchesDataSource datasource;
+    DatabaseHelper db;
     private List<Products> productsList;
-    private myAdapter.RecyclerViewClickListener listener;
+
+    private List<Products> EbayProducts;
+    private List<Products> AmazonProducts;
+    private List<Products> AliExpressProducts;
+    private ArrayList<List> AllProducts;
+    private ArrayList<List> LoadingProducts;
+
+    private ExpandableListView expandableListView;
+    ExpandableListAdapter expandableListAdapter;
+    ExpandableListAdapter expandableListAdapterLoading;
+
+    private List<String> ParentList = new ArrayList<>();
+    {
+        ParentList.add("E-Bay");
+        ParentList.add("Amazon");
+        ParentList.add("Ali-Express");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        rview = findViewById(R.id.recyclerView);
-        datasource = new SearchesDataSource(this);
-        datasource.open();
-        SearchView search =  findViewById(R.id.searchView);
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                query = search.getQuery().toString();
-                datasource.createSearch_Term(query);
-                callApis(query);
-                search.setQuery("", false);
-                search.clearFocus();
-                return true;
-            }
+        db = new DatabaseHelper(this);
+        expandableListView = findViewById(R.id.expandListView1);
+        SearchView search = findViewById(R.id.searchView);
 
+        productsList = new ArrayList<>();
+
+        EbayProducts = new ArrayList<>();
+        AmazonProducts = new ArrayList<>();
+        AliExpressProducts = new ArrayList<>();
+
+        search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
+            public void onClick(View v) {
+                search.setIconified(false);
             }
         });
 
-        recyclerAdapter = new myAdapter(productsList,listener);
+        //Set up and populate sort filter dropdown
+        Spinner spinner = (Spinner) findViewById(R.id.SortFilters);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.SortFilters, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
+            //begin product search logic
+            search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    query = search.getQuery().toString();
+                    db.insertData(query);
+
+                    //Show loading indicator while the APIs are fetching the responses:
+                    //fills child rows with loading indicator
+
+                    LoadingProducts = new ArrayList<>();
+                    List<Products> LoadingProductsChild = new ArrayList<>();
+                    {
+                        LoadingProductsChild.add(new Products("Fetching Results...","","",""));
+                    }
+
+                    LoadingProducts.add(LoadingProductsChild);
+                    LoadingProducts.add(LoadingProductsChild);
+                    LoadingProducts.add(LoadingProductsChild);
+
+                    SetLoadingIndicator();
+
+                    callApis(query);
+                    search.setQuery("", false);
+                    search.clearFocus();
+
+                    AllProducts = new ArrayList<>();
+                    AllProducts.add(EbayProducts);
+                    AllProducts.add(AmazonProducts);
+                    AllProducts.add(AliExpressProducts);
+
+                    expandableListAdapter = new ExListAdapter(SearchResults.this, AllProducts, ParentList);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
+
     }
 
-    protected void setRecyclerView(){
-
-        setOnClickListener();
-        recyclerAdapter = new myAdapter(productsList,listener);
-        rview.setAdapter(recyclerAdapter);
-        rview.setLayoutManager(new LinearLayoutManager(this));
-        rview.setHasFixedSize(true);
+    public void SetLoadingIndicator()
+    {
+        expandableListAdapterLoading = new ExListAdapter(SearchResults.this, LoadingProducts, ParentList);
+        expandableListView.setAdapter(expandableListAdapterLoading);
     }
 
-    private void setOnClickListener() {
-        listener = new myAdapter.RecyclerViewClickListener() {
-            @Override
-            public void onClick(View v, int position) {
-                Intent showProductPage = new Intent(getApplicationContext(),ProductPage.class);
-                showProductPage.putExtra("ProductName", productsList.get(position).getpName());
-                showProductPage.putExtra("ProductPrice", productsList.get(position).getpPrice());
-                showProductPage.putExtra("ProductLink", productsList.get(position).getpLink());
-                showProductPage.putExtra("ProductImage", productsList.get(position).getpImage());
-                startActivity(showProductPage);
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+        if(!EbayProducts.isEmpty() || !AmazonProducts.isEmpty() || !AliExpressProducts.isEmpty() )
+        {
+            String selected = adapterView.getItemAtPosition(i).toString();
+            switch(selected){
+                case "Sort By:":
+                    break;
+                case "Name":
+                    sortName();
+                    expandableListView.setAdapter(expandableListAdapter);
+                    break;
+                case "Price Ascending":
+                    sortPriceAscending();
+                    expandableListView.setAdapter(expandableListAdapter);
+                    break;
+                case "Price Descending":
+                    sortPriceDescending();
+                    expandableListView.setAdapter(expandableListAdapter);
+                    break;
             }
-        };
+        }
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 
     protected void callApis(String query){
@@ -96,9 +174,7 @@ public class SearchResults extends AppCompatActivity {
         amazonUrl = "https://amazon-deutschland-data-scraper.p.rapidapi.com/search/" + query + "?api_key=7c3c12edf5e0523209099e036c847ef1";
         aliExpressUrl = "https://magic-aliexpress1.p.rapidapi.com/api/products/search?name=" + query + "&sort=SALE_PRICE_ASC&page=1&targetCurrency=EUR&lg=en";
 
-        productsList = new ArrayList<>();
-
-        searchEbay(ebayUrl,productsList);
+        searchEbay(ebayUrl,EbayProducts);
         //searchAmazon(amazonUrl,productsList);
         //searchAliExpress(aliExpressUrl,productsList);
     }
@@ -115,9 +191,9 @@ public class SearchResults extends AppCompatActivity {
                     public void onResponse(String response) {
                         try {
                             if (response == null || response == "" || response.isEmpty()){
-                                productsList.add(new Products("No Results Found","","",""));
+                                EbayProducts.add(new Products("No Results Found","","",""));
 
-                                setRecyclerView();
+                                expandableListView.setAdapter(expandableListAdapter);
                             }
                             else {
                                 JSONObject obj = new JSONObject(response);
@@ -151,11 +227,11 @@ public class SearchResults extends AppCompatActivity {
                                         }
                                     }
 
-                                    productsList.add(new Products("" + name, "" + link, "€" + price, "" + image));
+                                    EbayProducts.add(new Products("" + name, "" + link, "€" + price, "" + image));
 
                                     counter++;
 
-                                    setRecyclerView();
+                                    expandableListView.setAdapter(expandableListAdapter);
                                 }
                             }
                         } catch (JSONException e) {
@@ -199,9 +275,9 @@ public class SearchResults extends AppCompatActivity {
                     public void onResponse(String response) {
                         try {
                             if (response == null || response == "" || response.isEmpty()){
-                                productsList.add(new Products("No Results Found","","",""));
+                                AmazonProducts.add(new Products("No Results Found","","",""));
 
-                                setRecyclerView();
+                                expandableListView.setAdapter(expandableListAdapter);
                             }
                             else{
                                 JSONObject obj = new JSONObject(response);
@@ -215,11 +291,11 @@ public class SearchResults extends AppCompatActivity {
                                     String link = products.getString("url");
                                     String image = products.getString("image");
 
-                                    productsList.add(new Products("" + name, "" + link, "€" + price, "" + image));
+                                    AmazonProducts.add(new Products("" + name, "" + link, "€" + price, "" + image));
 
                                     counter++;
 
-                                    setRecyclerView();
+                                    expandableListView.setAdapter(expandableListAdapter);
                                 }
                             }
                         } catch (JSONException e) {
@@ -264,9 +340,9 @@ public class SearchResults extends AppCompatActivity {
                     public void onResponse(String response) {
                         try {
                             if (response == null || response == "" || response.isEmpty()){
-                                productsList.add(new Products("No Results Found","","",""));
+                                AliExpressProducts.add(new Products("No Results Found","","",""));
 
-                                setRecyclerView();
+                                expandableListView.setAdapter(expandableListAdapter);
                             }
                             else{
                                 JSONObject obj = new JSONObject(response);
@@ -280,11 +356,11 @@ public class SearchResults extends AppCompatActivity {
                                     String link = data.getString("product_detail_url");
                                     String image = data.getString("product_main_image_url");
 
-                                    productsList.add(new Products("" + name, "" + link, "€" + price, "" + image));
+                                    AliExpressProducts.add(new Products("" + name, "" + link, "€" + price, "" + image));
 
                                     counter++;
 
-                                    setRecyclerView();
+                                    expandableListView.setAdapter(expandableListAdapter);
                                 }
                             }
                         } catch (JSONException e) {
@@ -317,23 +393,161 @@ public class SearchResults extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    public void sortName(){
+        Collections.sort(EbayProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                return products.getpName().compareTo(t1.getpName());
+            }
+        });
+        Collections.sort(AmazonProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                return products.getpName().compareTo(t1.getpName());
+            }
+        });
+        Collections.sort(AliExpressProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                return products.getpName().compareTo(t1.getpName());
+            }
+        });
+    }
+
+    public void sortPriceAscending(){
+        Collections.sort(EbayProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                String tempPrice1 = t1.getpPrice();
+                String tempPrice2 = products.getpPrice();
+                tempPrice1 = tempPrice1.replaceAll("€", "");
+                tempPrice2 = tempPrice2.replaceAll("€", "");
+
+                float f1 = Float.parseFloat(tempPrice1);
+                float f2 = Float.parseFloat(tempPrice2);
+
+                int price1 = Math.round(f1);
+                int price2 = Math.round(f2);
+
+                return price2 - price1;
+            }
+        });
+
+        Collections.sort(AmazonProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                String tempPrice1 = t1.getpPrice();
+                String tempPrice2 = products.getpPrice();
+                tempPrice1 = tempPrice1.replaceAll("€", "");
+                tempPrice2 = tempPrice2.replaceAll("€", "");
+
+                float f1 = Float.parseFloat(tempPrice1);
+                float f2 = Float.parseFloat(tempPrice2);
+
+                int price1 = Math.round(f1);
+                int price2 = Math.round(f2);
+
+                return price2 - price1;
+            }
+        });
+
+        Collections.sort(AliExpressProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                String tempPrice1 = t1.getpPrice();
+                String tempPrice2 = products.getpPrice();
+                tempPrice1 = tempPrice1.replaceAll("€", "");
+                tempPrice2 = tempPrice2.replaceAll("€", "");
+
+                float f1 = Float.parseFloat(tempPrice1);
+                float f2 = Float.parseFloat(tempPrice2);
+
+                int price1 = Math.round(f1);
+                int price2 = Math.round(f2);
+
+                return price2 - price1;
+            }
+        });
+    }
+
+    public void sortPriceDescending(){
+        Collections.sort(EbayProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                String tempPrice1 = t1.getpPrice();
+                String tempPrice2 = products.getpPrice();
+                tempPrice1 = tempPrice1.replaceAll("€", "");
+                tempPrice2 = tempPrice2.replaceAll("€", "");
+
+                float f1 = Float.parseFloat(tempPrice1);
+                float f2 = Float.parseFloat(tempPrice2);
+
+                int price1 = Math.round(f1);
+                int price2 = Math.round(f2);
+
+                return price1 - price2;
+            }
+        });
+
+        Collections.sort(AmazonProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                String tempPrice1 = t1.getpPrice();
+                String tempPrice2 = products.getpPrice();
+                tempPrice1 = tempPrice1.replaceAll("€", "");
+                tempPrice2 = tempPrice2.replaceAll("€", "");
+
+                float f1 = Float.parseFloat(tempPrice1);
+                float f2 = Float.parseFloat(tempPrice2);
+
+                int price1 = Math.round(f1);
+                int price2 = Math.round(f2);
+
+                return price1 - price2;
+            }
+        });
+
+        Collections.sort(AliExpressProducts, new Comparator<Products>() {
+            @Override
+            public int compare(Products products, Products t1) {
+                String tempPrice1 = t1.getpPrice();
+                String tempPrice2 = products.getpPrice();
+                tempPrice1 = tempPrice1.replaceAll("€", "");
+                tempPrice2 = tempPrice2.replaceAll("€", "");
+
+                float f1 = Float.parseFloat(tempPrice1);
+                float f2 = Float.parseFloat(tempPrice2);
+
+                int price1 = Math.round(f1);
+                int price2 = Math.round(f2);
+
+                return price1 - price2;
+            }
+        });
+    }
     public void callHome(View view) {
         Intent showHome= new Intent(this, MainActivity.class);
-        startActivity(showHome);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHome, b);
     }
 
     public void callSearch(View view) {
         Intent showSearch = new Intent(this, SearchResults.class);
-        startActivity(showSearch);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showSearch, b);
     }
 
     public void CallRecentSearches(View view) {
         Intent showHistory = new Intent(this, SearchHistory.class);
-        startActivity(showHistory);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHistory, b);
     }
 
     public void callImageScanner(View view) {
         Intent showImageScanner = new Intent(this, ImageScanner.class);
-        startActivity(showImageScanner);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showImageScanner, b);
     }
+
+
 }

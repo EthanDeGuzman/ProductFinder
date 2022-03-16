@@ -1,6 +1,7 @@
 package edu.edeguzman.productfinder;
 
 import android.Manifest;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -22,7 +23,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import edu.edeguzman.productfinder.ml.Model;
+import edu.edeguzman.productfinder.ml.ModelUnquant;
 
 public class ImageScanner extends AppCompatActivity {
 
@@ -37,7 +38,6 @@ public class ImageScanner extends AppCompatActivity {
         setContentView(R.layout.activity_image_scanner);
 
         result = findViewById(R.id.result);
-        confidence = findViewById(R.id.confidence);
         imageView = findViewById(R.id.imageView);
         picture = findViewById(R.id.button);
 
@@ -58,7 +58,7 @@ public class ImageScanner extends AppCompatActivity {
 
     public void classifyImage(Bitmap image){
         try {
-            Model model = Model.newInstance(getApplicationContext());
+            ModelUnquant model = ModelUnquant.newInstance(getApplicationContext());
 
             // Creates inputs for reference.
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
@@ -83,7 +83,7 @@ public class ImageScanner extends AppCompatActivity {
             inputFeature0.loadBuffer(byteBuffer);
 
             // Runs model inference and gets result.
-            Model.Outputs outputs = model.process(inputFeature0);
+            ModelUnquant.Outputs outputs = model.process(inputFeature0);
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
             float[] confidences = outputFeature0.getFloatArray();
@@ -96,14 +96,18 @@ public class ImageScanner extends AppCompatActivity {
                     maxPos = i;
                 }
             }
-            String[] classes = {"Xbox Series X Controller", "Xbox One Controller", "PS5 Controller", "PS4 Controller"};
-            result.setText(classes[maxPos]);
+            String[] classes = {"PS4 Black Controller", "PS5 White Controller", "Nintendo Switch Red & Blue Joycons",
+                    "PS5 Console", "Seagate Portable PS4 Hard Drive", "Logitech G403 Wired Gaming Mouse",
+                    "HyperX Cloud Wireless Headset", "PS3 Slim Console", "Nintendo Switch Console",
+                    "Logitech G915 TKL Wireless Gaming Keyboard", "PS5 Black Controller", "Logitech Superlight Pro Wireless Gaming Mouse",
+                    "Ezontec Sniper 100 Gaming Mouse", "PS4 Pro Console", "Razer Hammerhead Earbuds",
+                    "Sennheiser HD598 SE Headphones", "Superlux HD681 MS Headphones", "ROD Lavalier Microphone",
+                    "Nintendo Wii White Console", "AT2020 Audio-Technica Microphone", "HyperX Quadcast S Microphone",
+                    "Lenovo SK-8827 Keyboard", "Corsair STRAFE Mechanical Gaming Keyboard", "Gioteck XH100S Headset",
+                    "SN 30 Pro Controller", "Xbox One Black Controller", "Steam Controller",
+                    "PS3 Black Controller", "Microsoft Wireless Mobile Mouse 3500", "Xbox Series X Console" };
+            result.setText(classes[maxPos] + " Confidence: " + maxConfidence * 100);
 
-            String s = "";
-            for(int i = 0; i < classes.length; i++){
-                s += String.format("%s: %.1f%%\n", classes[i], confidences[i] * 100);
-            }
-            confidence.setText(s);
 
             //Call Result Page and pass result as parameter
             callResult(classes[maxPos]);
@@ -132,27 +136,32 @@ public class ImageScanner extends AppCompatActivity {
 
     public void callResult(String query){
         Intent showResults = new Intent(this, Results.class);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
         showResults.putExtra("query", query);
-        startActivity(showResults);
+        startActivity(showResults, b);
     }
 
     public void callHome(View view) {
         Intent showHome= new Intent(this, MainActivity.class);
-        startActivity(showHome);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHome, b);
     }
 
     public void callSearch(View view) {
         Intent showSearch = new Intent(this, SearchResults.class);
-        startActivity(showSearch);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showSearch, b);
     }
 
     public void CallRecentSearches(View view) {
         Intent showHistory = new Intent(this, SearchHistory.class);
-        startActivity(showHistory);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showHistory, b);
     }
 
     public void callImageScanner(View view) {
         Intent showImageScanner = new Intent(this, ImageScanner.class);
-        startActivity(showImageScanner);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+        startActivity(showImageScanner, b);
     }
 }
