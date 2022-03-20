@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SearchViewStyle" parent="">
+        <item name="android:tint">@color/dark_gray</item>
+        <item name="android:editTextColor">@color/dark_gray</item>
+    </style>
+</resources>

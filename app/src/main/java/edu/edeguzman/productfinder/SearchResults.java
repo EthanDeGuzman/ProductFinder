@@ -82,7 +82,8 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
         //Set up and populate sort filter dropdown
         Spinner spinner = (Spinner) findViewById(R.id.SortFilters);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.SortFilters, android.R.layout.simple_spinner_item);
+                R.array.SortFilters, R.layout.spinner_item);
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
@@ -169,14 +170,17 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
     }
 
     protected void callApis(String query){
+        //Replace & symbol in query
+        query = query.replaceAll("&", "and");
+
         //Declare URls and call methods (Euro Based)
         ebayUrl ="https://ebay-products-search-scraper.p.rapidapi.com/products?query=" + query + "&page=1&Item_Location=europe";
-        amazonUrl = "https://amazon-deutschland-data-scraper.p.rapidapi.com/search/" + query + "?api_key=7c3c12edf5e0523209099e036c847ef1";
+        amazonUrl ="https://amazon24.p.rapidapi.com/api/product?keyword=" + query + "&country=DE&page=1";
         aliExpressUrl = "https://magic-aliexpress1.p.rapidapi.com/api/products/search?name=" + query + "&sort=SALE_PRICE_ASC&page=1&targetCurrency=EUR&lg=en";
 
         searchEbay(ebayUrl,EbayProducts);
-        //searchAmazon(amazonUrl,productsList);
-        //searchAliExpress(aliExpressUrl,productsList);
+        searchAmazon(amazonUrl,productsList);
+        searchAliExpress(aliExpressUrl,productsList);
     }
 
     protected void searchEbay(String url, List<Products> productsList) {
@@ -199,7 +203,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                                 JSONObject obj = new JSONObject(response);
                                 JSONArray array = obj.getJSONArray("products");
 
-                                for (int i = 0; i < 5; i++) {
+                                for (int i = 0; i < array.length(); i++) {
                                     JSONObject products = array.getJSONObject(i);
 
                                     String name = products.getString("title");
@@ -214,6 +218,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                                         if (!splitPrice[x].equals("to")){
                                             //Get rid of Dollar Sign
                                             splitPrice[x] = splitPrice[x].replace("$", "");
+                                            splitPrice[x] = splitPrice[x].replaceAll(",", "");
                                             double tempPrice = Double.parseDouble(splitPrice[x]);
 
                                             //Change price to euro
@@ -228,9 +233,6 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                                     }
 
                                     EbayProducts.add(new Products("" + name, "" + link, "€" + price, "" + image));
-
-                                    counter++;
-
                                     expandableListView.setAdapter(expandableListAdapter);
                                 }
                             }
@@ -281,21 +283,30 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                             }
                             else{
                                 JSONObject obj = new JSONObject(response);
-                                JSONArray array = obj.getJSONArray("results");
+                                JSONArray array = obj.getJSONArray("docs");
 
-                                for(int i = 0; i < 5; i++){
-                                    JSONObject products = array.getJSONObject(i);
-
-                                    String name = products.getString("name");
-                                    String price = products.getString("price");
-                                    String link = products.getString("url");
-                                    String image = products.getString("image");
-
-                                    AmazonProducts.add(new Products("" + name, "" + link, "€" + price, "" + image));
-
-                                    counter++;
-
+                                //Amazon API sometimes responds with a result but empty
+                                if (array.length() <= 0){
+                                    AmazonProducts.add(new Products("No Results Found","","",""));
                                     expandableListView.setAdapter(expandableListAdapter);
+                                }
+                                else{
+                                    for(int i = 0; i < array.length(); i++){
+                                        JSONObject products = array.getJSONObject(i);
+
+                                        String name = products.getString("product_title");
+                                        String price = products.getString("app_sale_price");
+                                        String link = products.getString("product_detail_url");
+                                        String image = products.getString("product_main_image_url");
+
+                                        if(price == "null"){
+                                            price = "0";
+                                        }
+
+                                        price = price.replaceAll(",", ".");
+
+                                        AmazonProducts.add(new Products("" + name, "" + link, "€" + price, "" + image));
+                                    }
                                 }
                             }
                         } catch (JSONException e) {
@@ -313,7 +324,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
             @Override
             public Map getHeaders() throws AuthFailureError {
                 HashMap headers = new HashMap();
-                headers.put("x-rapidapi-host", "amazon-deutschland-data-scraper.p.rapidapi.com");
+                headers.put("x-rapidapi-host", "amazon24.p.rapidapi.com");
                 headers.put("x-rapidapi-key", "721f9e5ae4msh6c1a025129c3019p187cfbjsnc2b39eb1b331");
                 return headers;
             }
@@ -326,7 +337,6 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
-
     }
 
     protected void searchAliExpress(String url, List<Products> productsList){
@@ -348,7 +358,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                                 JSONObject obj = new JSONObject(response);
                                 JSONArray array = obj.getJSONArray("docs");
 
-                                for(int i = 0; i < 5; i++){
+                                for(int i = 0; i < array.length(); i++){
                                     JSONObject data = array.getJSONObject(i);
 
                                     String name = data.getString("product_title");
@@ -356,10 +366,10 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                                     String link = data.getString("product_detail_url");
                                     String image = data.getString("product_main_image_url");
 
+                                    link = link.replaceFirst("//", "https://");
+                                    image = image.replaceFirst("https:https", "https");
+
                                     AliExpressProducts.add(new Products("" + name, "" + link, "€" + price, "" + image));
-
-                                    counter++;
-
                                     expandableListView.setAdapter(expandableListAdapter);
                                 }
                             }
@@ -426,10 +436,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                 float f1 = Float.parseFloat(tempPrice1);
                 float f2 = Float.parseFloat(tempPrice2);
 
-                int price1 = Math.round(f1);
-                int price2 = Math.round(f2);
-
-                return price2 - price1;
+                return Float.compare(f2, f1);
             }
         });
 
@@ -444,10 +451,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                 float f1 = Float.parseFloat(tempPrice1);
                 float f2 = Float.parseFloat(tempPrice2);
 
-                int price1 = Math.round(f1);
-                int price2 = Math.round(f2);
-
-                return price2 - price1;
+                return Float.compare(f2, f1);
             }
         });
 
@@ -462,10 +466,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                 float f1 = Float.parseFloat(tempPrice1);
                 float f2 = Float.parseFloat(tempPrice2);
 
-                int price1 = Math.round(f1);
-                int price2 = Math.round(f2);
-
-                return price2 - price1;
+                return Float.compare(f2, f1);
             }
         });
     }
@@ -482,10 +483,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                 float f1 = Float.parseFloat(tempPrice1);
                 float f2 = Float.parseFloat(tempPrice2);
 
-                int price1 = Math.round(f1);
-                int price2 = Math.round(f2);
-
-                return price1 - price2;
+                return Float.compare(f1, f2);
             }
         });
 
@@ -500,10 +498,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                 float f1 = Float.parseFloat(tempPrice1);
                 float f2 = Float.parseFloat(tempPrice2);
 
-                int price1 = Math.round(f1);
-                int price2 = Math.round(f2);
-
-                return price1 - price2;
+                return Float.compare(f1, f2);
             }
         });
 
@@ -518,10 +513,7 @@ public class SearchResults extends AppCompatActivity implements AdapterView.OnIt
                 float f1 = Float.parseFloat(tempPrice1);
                 float f2 = Float.parseFloat(tempPrice2);
 
-                int price1 = Math.round(f1);
-                int price2 = Math.round(f2);
-
-                return price1 - price2;
+                return Float.compare(f1, f2);
             }
         });
     }

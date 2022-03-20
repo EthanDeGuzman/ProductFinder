@@ -13,28 +13,55 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="120dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
         android:backgroundTint="@color/midnight_blue"
         android:text="Take Picture"
         android:textAllCaps="false"
-        android:textSize="21sp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/Searchbtn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.024"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/result"
+        app:layout_constraintVertical_bias="0.428"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/button_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/midnight_blue"
+        android:text="Choose Photo"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/Searchbtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/result"
+        app:layout_constraintVertical_bias="0.428"
         tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="370sp"
-        android:layout_height="370sp"
+        android:layout_width="339dp"
+        android:layout_height="362dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="84dp"
         android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.609"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.189"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -43,42 +70,50 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="144dp"
+        android:layout_marginTop="10dp"
         android:text="Classified as:"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.0"
         tools:ignore="MissingConstraints" />
 
-    <TextView
+    <EditText
         android:id="@+id/result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/classified"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:background="@drawable/edittextbackground"
         android:maxLines="2"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
         android:textAlignment="center"
         android:textColor="#C30000"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/classified"
+        app:layout_constraintVertical_bias="0.054"
         tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/BannerColour"
         android:layout_width="0dp"
         android:layout_height="55dp"
+        android:src="@color/midnight_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@color/midnight_blue"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/PageTitle"
@@ -105,38 +140,45 @@
         android:textColor="#D7CCC8"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_History"
         android:layout_width="wrap_content"
         android:layout_height="75dp"
-        android:layout_marginStart="10dp"
         android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_recent_history"
         android:onClick="CallRecentSearches"
         android:text="History"
+        android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintStart_toEndOf="@+id/Button_Home"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintHorizontal_bias="0.323"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_Search"
         android:layout_width="wrap_content"
         android:layout_height="75dp"
-        android:layout_marginEnd="10dp"
         android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_search"
-        android:drawableTint="@color/white"
         android:onClick="callSearch"
         android:text="Searches"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toStartOf="@+id/Button_ImageScanner"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.664"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_ImageScanner"
@@ -153,8 +195,9 @@
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/Button_History"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintStart_toStartOf="@+id/Button_Home"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -167,5 +210,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/Searchbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/midnight_blue"
+        android:text="Search Product"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/result"
+        app:layout_constraintVertical_bias="0.955" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,19 +17,42 @@
         app:layout_constraintTop_toTopOf="parent"
         android:src="@color/midnight_blue"/>
 
-    <Spinner
-        android:id="@+id/SortFilters"
-        android:layout_width="240dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="84dp"
-        android:background="@drawable/bg_white_rounded"
-        android:textColor="#D7CCC8"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/TopResultsTitle"
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/background"
+        android:backgroundTint="@color/white"
+        android:backgroundTintMode="add"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BannerColour"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BannerColour">
+
+        <Spinner
+            android:id="@+id/SortFilters"
+            android:layout_width="175dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+
+            android:gravity="center"
+            android:spinnerMode="dropdown"
+            tools:layout_editor_absoluteX="295dp"
+            tools:layout_editor_absoluteY="73dp" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/greydownarrow" />
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/Button_Home"
@@ -40,41 +63,48 @@
         android:drawableTop="@android:drawable/ic_menu_compass"
         android:onClick="callHome"
         android:text="Home"
-        android:textColor="#D7CCC8"
+        android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_History"
         android:layout_width="wrap_content"
         android:layout_height="75dp"
-        android:layout_marginStart="10dp"
         android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_recent_history"
         android:onClick="CallRecentSearches"
         android:text="History"
+        android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintStart_toEndOf="@+id/Button_Home"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintHorizontal_bias="0.323"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_Search"
         android:layout_width="wrap_content"
         android:layout_height="75dp"
-        android:layout_marginEnd="10dp"
         android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_search"
-        android:drawableTint="@color/white"
         android:onClick="callSearch"
         android:text="Searches"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toStartOf="@+id/Button_ImageScanner"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.664"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_ImageScanner"
@@ -85,12 +115,14 @@
         android:drawableTop="@android:drawable/ic_menu_camera"
         android:onClick="callImageScanner"
         android:text="AI Scan"
+        android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/Button_History"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintStart_toStartOf="@+id/Button_Home"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -133,12 +165,18 @@
     <ExpandableListView
         android:id="@+id/expandListView1"
         android:layout_width="0dp"
-        android:layout_height="450dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="100dp"
         android:background="@color/onyx"
         android:fadeScrollbars="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TopResultsTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/TopResultsTitle"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,11 @@
 package edu.edeguzman.productfinder;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +56,12 @@ public class SearchAdapter extends BaseAdapter {
 
         Tv_term.setText(search);
 
+        Tv_term.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callResults(search);
+            }
+        });
 
         Iv_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,4 +95,10 @@ public class SearchAdapter extends BaseAdapter {
         return this.arrayList.size();
     }
 
+    private void callResults(String query){
+        Intent showResults = new Intent(context, Results.class);
+        Bundle b = ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle();
+        showResults.putExtra("query", query);
+        context.startActivity(showResults, b);
+    }
 }

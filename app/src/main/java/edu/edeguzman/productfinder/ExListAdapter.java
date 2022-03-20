@@ -13,6 +13,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -140,8 +141,7 @@ public class ExListAdapter  extends BaseExpandableListAdapter {
         productTab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (pInfoStrings.getpName() != "No Results Found") {
+                if (!pInfoStrings.getpName().equals("No Results Found") && !pInfoStrings.getpName().equals("Fetching Results...")) {
                     Intent intent = new Intent(context, ProductPage.class);
                     Bundle b = ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle();
                     intent.putExtra("ProductName", pInfoStrings.getpName());

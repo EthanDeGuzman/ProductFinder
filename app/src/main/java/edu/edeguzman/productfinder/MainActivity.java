@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
         db = new DatabaseHelper(this);
 
         toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        barcodeText = findViewById(R.id.barcode_text);
         surfaceView = findViewById(R.id.surface_view);
+        barcodeText = findViewById(R.id.barcode_text);
 
         isScannable = true;
         initialiseDetectorsAndSources();
@@ -129,11 +129,9 @@ public class MainActivity extends AppCompatActivity {
                             if (barcodes.valueAt(0).email != null) {
                                 barcodeText.removeCallbacks(null);
                                 barcodeData = barcodes.valueAt(0).email.address;
-                                barcodeText.setText(barcodeData);
                                 toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
                             } else {
                                 barcodeData = barcodes.valueAt(0).displayValue;
-                                barcodeText.setText(barcodeData);
                                 toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
                             }
 
@@ -158,31 +156,31 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //Convert String to JSON Array
-                        JSONArray array = null;
-                        try {
-                            array = new JSONArray(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        try{
+                            //Convert String to JSON Array
+                            JSONArray array = new JSONArray(response);
+                            //Loop through array and get data
+                            for(int i = 0; i < array.length(); i++){
+                                try {
+                                    JSONObject jsonObject = array.getJSONObject(i);
+                                    if (jsonObject.has("error")){
+                                        name = "";
+                                        Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT).show();
+                                        showProductName();
+                                    }
+                                    else{
+                                        name = jsonObject.getString("name");
+                                        barcodeText.setText(name);
+                                        showProductName();
+                                    }
+                                }
+                                catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }
-                        //Loop through array and get data
-                        for(int i = 0; i < array.length(); i++){
-                            try {
-                                JSONObject jsonObject = array.getJSONObject(i);
-                                if (jsonObject.getString("error") == null){
-                                    name = jsonObject.getString("name");
-                                    barcodeText.setText(name);
-                                    showProductName();
-                                }
-                                else{
-                                    name = "";
-                                    Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT).show();
-                                    showProductName();
-                                }
-                            }
-                            catch (JSONException e){
-                                e.printStackTrace();
-                            }
+                        catch(JSONException e){
+                            e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {

@@ -20,15 +20,19 @@
 
     <ListView
         android:id="@+id/lv"
-        android:layout_width="407dp"
-        android:layout_height="520dp"
+        android:layout_width="388dp"
+        android:layout_height="500dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="70dp"
+        android:layout_marginEnd="10dp"
         android:background="@color/onyx"
         android:fadeScrollbars="false"
         android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/BannerColour"
@@ -62,17 +66,19 @@
         android:drawableTop="@android:drawable/ic_menu_compass"
         android:onClick="callHome"
         android:text="Home"
-        android:textColor="#D7CCC8"
+        android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_History"
         android:layout_width="wrap_content"
         android:layout_height="75dp"
-        android:layout_marginStart="10dp"
         android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_recent_history"
         android:drawableTint="@color/american_rose"
@@ -81,24 +87,28 @@
         android:textSize="12sp"
         android:textColor="@color/american_rose"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintStart_toEndOf="@+id/Button_Home"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintHorizontal_bias="0.323"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_Search"
         android:layout_width="wrap_content"
         android:layout_height="75dp"
-        android:layout_marginEnd="10dp"
         android:backgroundTint="@color/midnight_blue"
         android:drawableTop="@android:drawable/ic_menu_search"
-        android:drawableTint="@color/white"
         android:onClick="callSearch"
         android:text="Searches"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toStartOf="@+id/Button_ImageScanner"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.664"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
         android:id="@+id/Button_ImageScanner"
@@ -110,11 +120,13 @@
         android:onClick="callImageScanner"
         android:text="AI Scan"
         android:textSize="12sp"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/Button_History"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintStart_toStartOf="@+id/Button_Home"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.6" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

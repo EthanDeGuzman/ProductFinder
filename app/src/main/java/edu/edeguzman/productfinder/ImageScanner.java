@@ -5,13 +5,18 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,9 +32,9 @@ import edu.edeguzman.productfinder.ml.ModelUnquant;
 
 public class ImageScanner extends AppCompatActivity {
 
-    TextView result, confidence;
+    EditText result;
     ImageView imageView;
-    Button picture;
+    Button picture, choosePhoto, searchProductbtn;
     int imageSize = 224;
 
     @Override
@@ -40,6 +45,24 @@ public class ImageScanner extends AppCompatActivity {
         result = findViewById(R.id.result);
         imageView = findViewById(R.id.imageView);
         picture = findViewById(R.id.button);
+        choosePhoto = findViewById(R.id.button_2);
+        searchProductbtn = findViewById(R.id.Searchbtn);
+
+        result.setVisibility(View.INVISIBLE);
+        searchProductbtn.setVisibility(View.INVISIBLE);
+
+        searchProductbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(result.getText().toString() != null || result.getText().toString() != "")
+                {
+                    String product = result.getText().toString();
+
+                    callResult(product);
+                }
+            }
+        });
 
         picture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +77,28 @@ public class ImageScanner extends AppCompatActivity {
                 }
             }
         });
+
+        choosePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Launch camera if we have permission
+                // view image gallery if we have permission
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                    selectImage();
+                else {
+                    //Request camera permission if we don't have it.
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+                }
+
+            }
+        });
+    }
+
+    private void selectImage() {
+        //intent to select an image
+        Intent photoGalleryIntent = new Intent(Intent.ACTION_PICK);
+        photoGalleryIntent.setType("image/*");
+        startActivityForResult(photoGalleryIntent, 2);
     }
 
     public void classifyImage(Bitmap image){
@@ -106,12 +151,10 @@ public class ImageScanner extends AppCompatActivity {
                     "Lenovo SK-8827 Keyboard", "Corsair STRAFE Mechanical Gaming Keyboard", "Gioteck XH100S Headset",
                     "SN 30 Pro Controller", "Xbox One Black Controller", "Steam Controller",
                     "PS3 Black Controller", "Microsoft Wireless Mobile Mouse 3500", "Xbox Series X Console" };
-            result.setText(classes[maxPos] + " Confidence: " + maxConfidence * 100);
 
-
-            //Call Result Page and pass result as parameter
-            callResult(classes[maxPos]);
-
+            result.setText(classes[maxPos]);
+            result.setVisibility(View.VISIBLE);
+            searchProductbtn.setVisibility(View.VISIBLE);
             // Releases model resources if no longer used.
             model.close();
         } catch (IOException e) {
@@ -131,14 +174,42 @@ public class ImageScanner extends AppCompatActivity {
             image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
             classifyImage(image);
         }
+        if (requestCode == 2 && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            Bitmap image = loadfromUri(uri);
+
+            int dimension = Math.min(image.getWidth(), image.getHeight());
+            image = ThumbnailUtils.extractThumbnail(image, dimension, dimension);
+            imageView.setImageBitmap(image);
+
+            image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
+            image = image.copy(Bitmap.Config.RGBA_F16, true);
+            classifyImage(image);
+        }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private Bitmap loadfromUri(Uri uri){
+        Bitmap bitmap = null;
+
+        try {
+            if (Build.VERSION.SDK_INT > 27) {
+                ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), uri);
+                bitmap = ImageDecoder.decodeBitmap(source);
+            } else {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
     public void callResult(String query){
         Intent showResults = new Intent(this, Results.class);
-        Bundle b = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
         showResults.putExtra("query", query);
-        startActivity(showResults, b);
+        startActivity(showResults);
     }
 
     public void callHome(View view) {
